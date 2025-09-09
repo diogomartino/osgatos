@@ -1,20 +1,18 @@
 import { getFileUrl } from '@/helpers/get-file-url';
 import type { TVideo } from '@/types/db';
 import NextImage from 'next/image';
-import Link from 'next/link';
 import { memo } from 'react';
 
 type TMenuItemProps = {
   item: TVideo;
-  onSelect?: () => void;
+  onClick?: (item: TVideo) => void;
 };
 
-const MenuItem = memo(({ item, onSelect }: TMenuItemProps) => {
+const MenuItem = memo(({ item, onClick }: TMenuItemProps) => {
   return (
-    <Link
-      href={`/watch/${item.id}`}
-      className="flex w-full h-16 items-center px-2 py-2 rounded group min-h-[64px]"
-      onClick={onSelect}
+    <div
+      className="flex w-full h-16 items-center cursor-pointer rounded group min-h-[64px] hover:bg-zinc-800 transition-colors"
+      onClick={() => onClick?.(item)}
     >
       <div className="relative w-24 h-16 rounded overflow-hidden flex-shrink-0 bg-zinc-800">
         <NextImage
@@ -41,7 +39,7 @@ const MenuItem = memo(({ item, onSelect }: TMenuItemProps) => {
           )}
         </div>
       </div>
-    </Link>
+    </div>
   );
 });
 MenuItem.displayName = 'MenuItem';

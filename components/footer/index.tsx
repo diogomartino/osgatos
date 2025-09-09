@@ -3,8 +3,8 @@ import { memo } from 'react';
 
 const Footer = memo(() => {
   return (
-    <footer className="w-full flex items-center justify-center py-3 mt-4">
-      <span className="text-[10px] text-white/60">
+    <footer className="flex flex-col lg:flex-row items-center justify-center w-full py-3 mt-4">
+      <span className="text-[10px] text-white/60 text-center">
         Todo o material é disponibilizado para fins educacionais e de
         preservação cultural, sem fins lucrativos
       </span>

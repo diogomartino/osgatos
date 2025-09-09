@@ -28,7 +28,7 @@ const Poster = memo(({ title, imageUrl }: TPosterProps) => {
         priority
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/15 to-transparent pointer-events-none" />
-      <div className="relative z-10 p-5 w-full text-center">
+      <div className="relative p-5 w-full text-center">
         <h2 className="text-2xl font-bold text-white drop-shadow mb-3 transition-colors duration-300">
           {title}
         </h2>

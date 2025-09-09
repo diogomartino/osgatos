@@ -47,14 +47,14 @@ export default async function Page({ params }: TPageProps) {
   }
 
   return (
-    <div className="flex items-center flex-col flex-1 w-full shadow-2xl">
+    <div className="flex justify-center items-center flex-col flex-1 w-full shadow-2xl h-full">
       <div className="w-full max-w-5xl flex flex-col gap-6 items-center">
         <div className="w-full text-center">
           <h1 className="text-2xl md:text-3xl font-bold mb-2 drop-shadow-lg">
             {video.title}
           </h1>
           <Info
-            label="Série Fonseca"
+            label={`Série ${show?.title}`}
             duration={video.duration ?? 0}
             labelHref={`/show/${show?.slug}`}
           />

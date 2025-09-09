@@ -2,13 +2,13 @@
 
 import type { TVideo } from '@/types/db';
 import { Input } from '@heroui/input';
-import { Kbd } from '@heroui/kbd';
 import { Modal, ModalContent } from '@heroui/modal';
 import { Tooltip } from '@heroui/tooltip';
 import { debounce } from 'lodash';
 import { HelpCircle, Search } from 'lucide-react';
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
+import { useModalHistory } from './hooks';
 import { MenuItem } from './menu-item';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -17,7 +17,8 @@ const SearchModal = memo(() => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState(search);
-  const [highlightedIndex, setHighlightedIndex] = useState<number>(0);
+
+  useModalHistory(open, () => setOpen(false));
 
   const debouncedSetSearch = useMemo(
     () =>
@@ -27,9 +28,24 @@ const SearchModal = memo(() => {
     []
   );
 
-  useEffect(() => {
-    debouncedSetSearch(search);
-  }, [search, debouncedSetSearch]);
+  const onValueChange = useCallback(
+    (val: string) => {
+      setSearch(val);
+      debouncedSetSearch(val);
+    },
+    [debouncedSetSearch]
+  );
+
+  const onInputClick = useCallback((event: React.MouseEvent) => {
+    event.preventDefault();
+    setOpen(true);
+  }, []);
+
+  const onItemClick = useCallback((item: TVideo) => {
+    window.location.href = `/watch/${item.id}`;
+
+    setOpen(false);
+  }, []);
 
   const { data, isLoading } = useSWR<TVideo[]>(
     debouncedSearch
@@ -38,56 +54,14 @@ const SearchModal = memo(() => {
     fetcher
   );
 
-  // Keyboard shortcut Ctrl/Cmd+K
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setOpen((o) => !o);
-      }
-    };
-    document.addEventListener('keydown', down);
-    return () => document.removeEventListener('keydown', down);
-  }, []);
-
-  // Keyboard navigation inside results
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (!data || data.length === 0) return;
-
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        setHighlightedIndex((i) => (i + 1) % data.length);
-      }
-      if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setHighlightedIndex((i) => (i - 1 + data.length) % data.length);
-      }
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const item = data[highlightedIndex];
-        if (item) {
-          window.location.href = `/watch/${item.id}`;
-          setOpen(false);
-        }
-      }
-    },
-    [data, highlightedIndex]
-  );
-
   return (
-    <div className="w-full">
+    <div className="flex justify-center w-full">
       <Input
+        className="w-full lg:w-[300px]"
         readOnly
-        placeholder="Clica aqui para pesquisar..."
-        onClick={() => setOpen(true)}
-        endContent={
-          /Mac|iPod|iPhone|iPad/.test(navigator.platform) ? (
-            <Kbd keys={['command']}>K</Kbd>
-          ) : (
-            <Kbd keys={['ctrl']}>K</Kbd>
-          )
-        }
+        placeholder="Clica aqui para procurar..."
+        onClick={onInputClick}
+        endContent={<Search className="text-zinc-400" size="1rem" />}
       />
 
       <Modal
@@ -105,8 +79,7 @@ const SearchModal = memo(() => {
                 autoFocus
                 placeholder="Procura um sketch..."
                 value={search}
-                onValueChange={setSearch}
-                onKeyDown={handleKeyDown}
+                onValueChange={onValueChange}
                 className="p-4 w-full text-base sm:text-lg"
                 endContent={<Search className="text-zinc-400" size="1rem" />}
               />
@@ -132,19 +105,11 @@ const SearchModal = memo(() => {
                 </div>
               )}
 
-              {data?.map((item, i) => (
-                <div
-                  key={item.id}
-                  className={`cursor-pointer px-4 py-3 sm:px-2 sm:py-2 ${i === highlightedIndex ? 'bg-zinc-800' : ''}`}
-                  onMouseEnter={() => setHighlightedIndex(i)}
-                  onClick={() => {
-                    window.location.href = `/watch/${item.id}`;
-                    setOpen(false);
-                  }}
-                >
-                  <MenuItem item={item} />
-                </div>
-              ))}
+              <div className="flex flex-col gap-2">
+                {data?.map((item) => (
+                  <MenuItem item={item} key={item.id} onClick={onItemClick} />
+                ))}
+              </div>
             </div>
           </div>
         </ModalContent>

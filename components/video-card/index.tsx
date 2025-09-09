@@ -28,7 +28,7 @@ const VideoCard = memo(
           quality={60}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none" />
-        <div className="absolute bottom-0 left-0 right-0 z-10 p-3 flex flex-col gap-1">
+        <div className="absolute bottom-0 left-0 right-0 p-3 flex flex-col gap-1">
           <span className="text-white lg:text-base text-xs font-semibold drop-shadow line-clamp-2">
             {title}
           </span>

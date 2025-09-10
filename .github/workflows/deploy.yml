@@ -1,0 +1,35 @@
+name: Production Deployment
+
+on:
+  workflow_dispatch: # run manually
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # needed to push/merge
+      pull-requests: write # needed to create/merge PRs
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: development
+          title: 'Production Deployment'
+          body:
+            'This PR merges the latest changes from development into main for
+            production deployment.'
+          draft: false
+
+      - name: Merge Pull Request
+        if: steps.cpr.outputs.pull-request-number != ''
+        run: |
+          gh pr merge ${{ steps.cpr.outputs.pull-request-number }} --merge --admin --delete-branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

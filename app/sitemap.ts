@@ -9,6 +9,8 @@ const getVideosMapping = async (): Promise<MetadataRoute.Sitemap> => {
   return videos.map((video) => {
     const youtubeId = video.videoUrl.split('/').pop();
 
+    console.log('caralho', getFileUrl(video, video.thumbnail));
+
     return {
       url: `${process.env.NEXT_PUBLIC_URL}/watch/${video.id}`,
       lastModified: new Date(video.updated),
@@ -18,7 +20,7 @@ const getVideosMapping = async (): Promise<MetadataRoute.Sitemap> => {
         {
           title: video.title,
           description: video.transcript.slice(0, 160),
-          thumbnail_loc: getFileUrl(video, 'thumbnail'),
+          thumbnail_loc: getFileUrl(video, video.thumbnail),
           embed_loc: `${process.env.NEXT_PUBLIC_URL}/watch/${video.id}`,
           player_loc: `https://www.youtube.com/embed/${youtubeId}`,
           publication_date: new Date(video.created).toISOString()

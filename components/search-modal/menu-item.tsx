@@ -21,6 +21,8 @@ const MenuItem = memo(({ item, onClick }: TMenuItemProps) => {
           fill
           className="absolute inset-0 object-cover object-center"
           sizes="96px"
+          quality={40}
+          loading="lazy"
         />
       </div>
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 pl-4">

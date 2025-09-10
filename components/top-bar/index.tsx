@@ -6,7 +6,7 @@ import { SearchModal } from '../search-modal';
 const Topbar = memo(() => {
   return (
     <Navbar>
-      <NavbarContent>
+      <NavbarContent as="div">
         <NavbarBrand>
           <Link className="text-xl font-bold" href="/">
             OsGatos.net
@@ -14,11 +14,11 @@ const Topbar = memo(() => {
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent justify="center">
+      <NavbarContent justify="center" as="div">
         <SearchModal />
       </NavbarContent>
 
-      <NavbarContent justify="end" />
+      <NavbarContent justify="end" as="div" />
     </Navbar>
   );
 });

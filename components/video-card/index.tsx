@@ -24,9 +24,10 @@ const VideoCard = memo(
           src={thumbnailUrl}
           alt={title}
           fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
           className="object-cover object-center transition-opacity duration-200 group-hover:opacity-90"
           quality={60}
+          priority
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
         <div className="absolute right-0 bottom-0 left-0 flex flex-col gap-1 p-3">

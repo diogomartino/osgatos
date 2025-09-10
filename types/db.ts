@@ -9,8 +9,9 @@ type TVideo = {
   srt: string;
   videoUrl: string;
   duration: number;
-  created: Date;
-  updated: Date;
+  isSpecial: boolean;
+  created: string;
+  updated: string;
   expand?: {
     show: TShow;
   };
@@ -22,8 +23,8 @@ type TShow = {
   slug: string;
   cover: string;
   year: number;
-  created: Date;
-  updated: Date;
+  created: string;
+  updated: string;
   public: boolean;
 };
 

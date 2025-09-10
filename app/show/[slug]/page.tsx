@@ -1,8 +1,10 @@
+import { Grid } from '@/components/grid';
 import { Info } from '@/components/info';
-import { VideoCard } from '@/components/video-card';
+import { ShowJsonLd } from '@/components/json-ld/show';
 import { getFileUrl } from '@/helpers/get-file-url';
 import { getShowBySlug } from '@/queries/shows';
 import { getVideosByShow } from '@/queries/videos';
+import { TVideo } from '@/types/db';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -16,10 +18,29 @@ export async function generateMetadata({
   const { slug } = await params;
   const show = await getShowBySlug(slug);
 
+  if (!show) {
+    return {};
+  }
+
+  const title = `Gato Fedorento - Série ${show.title}`;
+  const description = `Série ${show.title} do Gato Fedorento.`;
+  const posterUrl = getFileUrl(show, show.cover);
+
   return {
-    title: `Gato Fedorento - Série ${show?.title}`,
+    title,
     openGraph: {
-      images: [getFileUrl(show, show?.cover)]
+      type: 'website',
+      title,
+      description,
+      url: `${process.env.NEXT_PUBLIC_URL}/shows/${show.slug}`,
+      siteName: 'OsGatos.net',
+      images: [posterUrl]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [posterUrl]
     }
   };
 }
@@ -38,28 +59,62 @@ export default async function Page({ params }: TPageProps) {
   }
 
   const videos = await getVideosByShow(show?.id);
+  const { normalVideos, specialVideos } = videos.reduce<{
+    normalVideos: TVideo[];
+    specialVideos: TVideo[];
+  }>(
+    (acc, video) => {
+      if (video.isSpecial) {
+        acc.specialVideos.push(video);
+      } else {
+        acc.normalVideos.push(video);
+      }
+      return acc;
+    },
+    { normalVideos: [], specialVideos: [] }
+  );
+
   const durationCount = videos.reduce((acc, v) => acc + (v.duration ?? 0), 0);
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col items-center justify-center">
-        <h1 className="text-3xl md:text-5xl font-bold mb-2 drop-shadow-lg">
-          Série {show.title}
-        </h1>
-        <Info label={`${videos.length} sketches`} duration={durationCount} />
+    <>
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col items-center justify-center">
+          <h1 className="text-3xl md:text-5xl font-bold mb-2 drop-shadow-lg">
+            Série {show.title}
+          </h1>
+          <Info label={`${videos.length} sketches`} duration={durationCount} />
+        </div>
+
+        <Grid videos={normalVideos} />
+
+        {specialVideos.length > 0 && (
+          <>
+            <div>
+              <div className="border-t border-gray-300 dark:border-gray-700" />
+              <h2 className="col-span-full text-xl font-semibold mt-4">
+                Especiais
+              </h2>
+            </div>
+            <Grid videos={specialVideos} />
+          </>
+        )}
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-        {videos.map((video) => (
-          <VideoCard
-            key={video.id}
-            duration={video.duration}
-            thumbnailUrl={getFileUrl(video, video.thumbnail)}
-            title={video.title}
-            href={`/watch/${video.id}`}
-          />
-        ))}
-      </div>
-    </div>
+      <ShowJsonLd
+        title={show.title}
+        description={`Série ${show.title} do Gato Fedorento.`}
+        url={`${process.env.NEXT_PUBLIC_URL}/show/${show.slug}`}
+        image={getFileUrl(show, show.cover)}
+        datePublished={new Date(show.created).toISOString()}
+        dateModified={new Date(show.updated).toISOString()}
+        episodes={videos.map((video, index) => ({
+          name: video.title,
+          url: `${process.env.NEXT_PUBLIC_URL}/watch/${video.id}`,
+          episodeNumber: index + 1,
+          datePublished: new Date(video.created).toISOString()
+        }))}
+      />
+    </>
   );
 }

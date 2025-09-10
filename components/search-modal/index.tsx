@@ -57,7 +57,7 @@ const SearchModal = memo(() => {
   return (
     <div className="flex justify-center w-full">
       <Input
-        className="w-full lg:w-[300px]"
+        className="w-full lg:w-[400px]"
         readOnly
         placeholder="Clica aqui para procurar..."
         onClick={onInputClick}

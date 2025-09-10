@@ -17,22 +17,22 @@ const VideoCard = memo(
 
     const cardContent = (
       <div
-        className="relative w-full aspect-[16/9] bg-zinc-900 rounded-md overflow-hidden shadow-lg group cursor-pointer transition-transform duration-200 hover:scale-101 hover:shadow-2xl"
+        className="group relative aspect-[16/9] w-full cursor-pointer overflow-hidden rounded-md bg-zinc-900 shadow-lg transition-transform duration-200 hover:scale-101 hover:shadow-2xl"
         tabIndex={0}
       >
         <NextImage
           src={thumbnailUrl}
           alt={title}
           fill
-          className="object-cover object-center group-hover:opacity-90 transition-opacity duration-200"
+          className="object-cover object-center transition-opacity duration-200 group-hover:opacity-90"
           quality={60}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none" />
-        <div className="absolute bottom-0 left-0 right-0 p-3 flex flex-col gap-1">
-          <span className="text-white lg:text-base text-xs font-semibold drop-shadow line-clamp-2">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+        <div className="absolute right-0 bottom-0 left-0 flex flex-col gap-1 p-3">
+          <span className="line-clamp-2 w-fit rounded bg-zinc-800/40 px-2 py-0.5 text-[10px] font-semibold text-white drop-shadow lg:text-sm">
             {title}
           </span>
-          <span className="text-[10px] lg:text-xs text-zinc-200 bg-zinc-800/80 rounded px-2 py-0.5 w-fit font-mono">
+          <span className="w-fit rounded bg-zinc-800/40 px-2 py-0.5 font-mono text-[8px] text-zinc-200 lg:text-xs">
             {formattedDuration}
           </span>
         </div>

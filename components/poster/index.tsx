@@ -11,12 +11,10 @@ const Poster = memo(({ title, imageUrl }: TPosterProps) => {
     <div
       className="
         relative
-        w-[180px] h-[270px]
-        sm:w-[180px] sm:h-[270px]
-        md:w-[220px] md:h-[330px]
-        lg:w-[260px] lg:h-[390px]
-        xl:w-[300px] xl:h-[450px]
-        bg-black rounded-2xl overflow-hidden shadow-2xl flex flex-col items-center justify-end cursor-pointer transition-transform duration-300 hover:scale-105 hover:shadow-[0_8px_32px_rgba(0,0,0,0.45)] group
+        w-[140px] h-[190px]
+        md:w-[210px] md:h-[315px]
+        lg:w-[240px] lg:h-[360px]
+        bg-black rounded-md overflow-hidden shadow-2xl flex flex-col items-center justify-end cursor-pointer transition-transform duration-300 hover:scale-105 hover:shadow-[0_8px_32px_rgba(0,0,0,0.45)] group
       "
       tabIndex={0}
     >
@@ -29,7 +27,7 @@ const Poster = memo(({ title, imageUrl }: TPosterProps) => {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/15 to-transparent pointer-events-none" />
       <div className="relative p-5 w-full text-center">
-        <h2 className="text-2xl font-bold text-white drop-shadow mb-3 transition-colors duration-300">
+        <h2 className="text-sm lg:text-2xl font-bold text-white drop-shadow mb-3 transition-colors duration-300">
           {title}
         </h2>
       </div>

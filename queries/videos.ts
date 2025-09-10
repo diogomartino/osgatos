@@ -43,14 +43,14 @@ const getPreviousAndNextVideoById = async (
             .collection('videos')
             .getFirstListItem<TVideo>(
               `show="${currentVideo.show}" && id < "${videoId}"`,
-              { sort: '-id' }
+              { sort: '-created' }
             )
             .catch(() => null),
           pb
             .collection('videos')
             .getFirstListItem<TVideo>(
               `show="${currentVideo.show}" && id > "${videoId}"`,
-              { sort: 'id' }
+              { sort: 'created' }
             )
             .catch(() => null)
         ]);
@@ -77,7 +77,7 @@ const getVideosByShow = (showId: string): Promise<TVideo[]> =>
 
         const videos = await pb.collection('videos').getFullList<TVideo>({
           filter: `show="${showId}"`,
-          sort: '-id'
+          sort: 'created'
         });
 
         return videos;
@@ -97,7 +97,8 @@ const getAllVideos = async (): Promise<TVideo[]> =>
 
         const pb = await getPb();
         const videos = await pb.collection('videos').getFullList<TVideo>({
-          expand: 'show'
+          expand: 'show',
+          sort: 'created'
         });
         return videos;
       } catch {

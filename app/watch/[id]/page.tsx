@@ -1,6 +1,6 @@
 import { Info } from '@/components/info';
 import { VideoJsonLd } from '@/components/json-ld/video';
-import VideoPlayer from '@/components/video-player';
+import { VideoPlayer } from '@/components/video-player';
 import { getFileUrl } from '@/helpers/get-file-url';
 import { getShowByVideoId } from '@/queries/shows';
 import { getPreviousAndNextVideoById, getVideoById } from '@/queries/videos';

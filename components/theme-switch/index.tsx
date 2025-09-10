@@ -7,13 +7,14 @@ import clsx from 'clsx';
 import { useTheme } from 'next-themes';
 
 import { MoonFilledIcon, SunFilledIcon } from '@/components/icons';
+import { memo } from 'react';
 
 type TThemeSwitchProps = {
   className?: string;
   classNames?: SwitchProps['classNames'];
 };
 
-const ThemeSwitch = ({ className, classNames }: TThemeSwitchProps) => {
+const ThemeSwitch = memo(({ className, classNames }: TThemeSwitchProps) => {
   const { theme, setTheme } = useTheme();
   const isSSR = useIsSSR();
 
@@ -75,6 +76,7 @@ const ThemeSwitch = ({ className, classNames }: TThemeSwitchProps) => {
       </div>
     </Component>
   );
-};
+});
+ThemeSwitch.displayName = 'ThemeSwitch';
 
 export { ThemeSwitch };

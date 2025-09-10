@@ -1,19 +1,15 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import 'video.js/dist/video-js.css';
 
-interface VideoPlayerProps {
+type TVideoPlayerProps = {
   url: string;
   className?: string;
   videoId: string;
-}
+};
 
-export default function VideoPlayer({
-  url,
-  className,
-  videoId
-}: VideoPlayerProps) {
+const VideoPlayer = memo(({ url, className, videoId }: TVideoPlayerProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const playerRef = useRef<any | null>(null);
   const initCounter = useRef(0);
@@ -116,4 +112,7 @@ export default function VideoPlayer({
       className={className ?? 'w-full h-full'}
     />
   );
-}
+});
+VideoPlayer.displayName = 'VideoPlayer';
+
+export { VideoPlayer };

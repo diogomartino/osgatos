@@ -78,10 +78,10 @@ export default async function Page({ params }: TPageProps) {
 
   return (
     <>
-      <div className="flex justify-center items-center flex-col flex-1 w-full shadow-2xl h-full">
-        <div className="w-full max-w-5xl flex flex-col gap-6 items-center">
+      <div className="flex h-full w-full flex-1 flex-col items-center justify-center shadow-2xl">
+        <div className="flex w-full max-w-5xl flex-col items-center gap-6">
           <div className="w-full text-center">
-            <h1 className="text-2xl md:text-3xl font-bold mb-2 drop-shadow-lg">
+            <h1 className="mb-2 text-2xl font-bold drop-shadow-lg md:text-3xl">
               {video.title}
             </h1>
             <Info
@@ -91,7 +91,7 @@ export default async function Page({ params }: TPageProps) {
             />
           </div>
 
-          <div className="w-full aspect-video rounded-lg overflow-hidden shadow-lg border border-zinc-800 bg-black">
+          <div className="aspect-video w-full overflow-hidden rounded-lg border border-zinc-800 bg-black shadow-lg">
             <Suspense fallback={<div>Loading...</div>}>
               <VideoPlayer url={video.videoUrl} videoId={video.id} />
             </Suspense>
@@ -100,16 +100,16 @@ export default async function Page({ params }: TPageProps) {
           <div className="flex w-full justify-between">
             {previous ? (
               <Link href={`/watch/${previous?.id}`} className="group w-fit">
-                <div className="flex items-center gap-2 px-2 py-1 rounded-lg transition hover:shadow-md cursor-pointer">
+                <div className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 transition hover:shadow-md">
                   <Button
                     size="sm"
                     isIconOnly
                     variant="flat"
-                    className="group-hover:bg-zinc-700/80 group-hover:text-primary-500 transition"
+                    className="group-hover:text-primary-500 transition group-hover:bg-zinc-700/80"
                   >
                     <ArrowBigLeftDash size="0.9rem" />
                   </Button>
-                  <span className="text-xs text-zinc-300 group-hover:text-white transition line-clamp-1">
+                  <span className="line-clamp-1 text-xs text-zinc-300 transition group-hover:text-white">
                     {previous?.title}
                   </span>
                 </div>
@@ -119,15 +119,15 @@ export default async function Page({ params }: TPageProps) {
             )}
             {next ? (
               <Link href={`/watch/${next?.id}`} className="group w-fit">
-                <div className="flex items-center gap-2 justify-end px-2 py-1 rounded-lg transition hover:shadow-md cursor-pointer">
-                  <span className="text-xs text-zinc-300 group-hover:text-white transition line-clamp-1">
+                <div className="flex cursor-pointer items-center justify-end gap-2 rounded-lg px-2 py-1 transition hover:shadow-md">
+                  <span className="line-clamp-1 text-xs text-zinc-300 transition group-hover:text-white">
                     {next?.title}
                   </span>
                   <Button
                     size="sm"
                     isIconOnly
                     variant="flat"
-                    className="group-hover:bg-zinc-700/80 group-hover:text-primary-500 transition"
+                    className="group-hover:text-primary-500 transition group-hover:bg-zinc-700/80"
                   >
                     <ArrowBigRightDash size="0.9rem" />
                   </Button>

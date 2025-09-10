@@ -109,7 +109,7 @@ const VideoPlayer = memo(({ url, className, videoId }: TVideoPlayerProps) => {
     <div
       data-vjs-player
       ref={containerRef}
-      className={className ?? 'w-full h-full'}
+      className={className ?? 'h-full w-full'}
     />
   );
 });

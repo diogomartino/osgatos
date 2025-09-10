@@ -9,7 +9,7 @@ type TGridProps = {
 
 const Grid = memo(({ videos }: TGridProps) => {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
       {videos.map((video) => (
         <VideoCard
           key={video.id}

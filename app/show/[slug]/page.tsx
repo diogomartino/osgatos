@@ -80,7 +80,7 @@ export default async function Page({ params }: TPageProps) {
     <>
       <div className="flex flex-col gap-6">
         <div className="flex flex-col items-center justify-center">
-          <h1 className="text-3xl md:text-5xl font-bold mb-2 drop-shadow-lg">
+          <h1 className="mb-2 text-3xl font-bold drop-shadow-lg md:text-5xl">
             Série {show.title}
           </h1>
           <Info label={`${videos.length} sketches`} duration={durationCount} />
@@ -92,7 +92,7 @@ export default async function Page({ params }: TPageProps) {
           <>
             <div>
               <div className="border-t border-gray-300 dark:border-gray-700" />
-              <h2 className="col-span-full text-xl font-semibold mt-4">
+              <h2 className="col-span-full mt-4 text-xl font-semibold">
                 Especiais
               </h2>
             </div>

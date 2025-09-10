@@ -55,7 +55,7 @@ const SearchModal = memo(() => {
   );
 
   return (
-    <div className="flex justify-center w-full">
+    <div className="flex w-full justify-center">
       <Input
         className="w-full lg:w-[400px]"
         readOnly
@@ -68,19 +68,19 @@ const SearchModal = memo(() => {
         isOpen={open}
         onOpenChange={setOpen}
         size="lg"
-        className="p-0 bg-background"
+        className="bg-background p-0"
         hideCloseButton
         backdrop="blur"
       >
-        <ModalContent className="p-0 flex items-center justify-center">
-          <div className="w-full h-screen sm:h-[600px] sm:w-[480px] sm:rounded-xl bg-background text-foreground shadow-lg flex flex-col fixed inset-0 sm:static max-w-full max-h-screen sm:max-h-[600px]">
-            <div className="flex items-center w-full">
+        <ModalContent className="flex items-center justify-center p-0">
+          <div className="bg-background text-foreground fixed inset-0 flex h-screen max-h-screen w-full max-w-full flex-col shadow-lg sm:static sm:h-[600px] sm:max-h-[600px] sm:w-[480px] sm:rounded-xl">
+            <div className="flex w-full items-center">
               <Input
                 autoFocus
                 placeholder="Procura um sketch..."
                 value={search}
                 onValueChange={onValueChange}
-                className="p-4 w-full text-base sm:text-lg"
+                className="w-full p-4 text-base sm:text-lg"
                 endContent={<Search className="text-zinc-400" size="1rem" />}
               />
 
@@ -92,7 +92,7 @@ const SearchModal = memo(() => {
                 <HelpCircle className="text-zinc-400" size="0.9rem" />
               </Tooltip>
             </div>
-            <div className="flex-1 overflow-y-auto min-h-[200px] max-h-[calc(100vh-64px)] sm:max-h-[536px]">
+            <div className="max-h-[calc(100vh-64px)] min-h-[200px] flex-1 overflow-y-auto sm:max-h-[536px]">
               {isLoading && (
                 <div className="p-4 text-center text-sm text-zinc-400">
                   A carregar resultados...

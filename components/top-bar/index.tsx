@@ -8,7 +8,7 @@ const Topbar = memo(() => {
     <Navbar>
       <NavbarContent>
         <NavbarBrand>
-          <Link className="font-bold text-xl" href="/">
+          <Link className="text-xl font-bold" href="/">
             OsGatos.net
           </Link>
         </NavbarBrand>

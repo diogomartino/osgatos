@@ -40,14 +40,14 @@ export default function RootLayout({
       <ViewTransition>
         <body
           className={clsx(
-            'min-h-screen text-foreground bg-background font-sans antialiased',
+            'text-foreground bg-background min-h-screen font-sans antialiased',
             fontSans.variable
           )}
         >
           <Providers themeProps={{ attribute: 'class', defaultTheme: 'dark' }}>
-            <div className="relative flex flex-col h-dvh">
+            <div className="relative flex h-dvh flex-col">
               <Topbar />
-              <main className="container mx-auto max-w-7xl flex-grow mt-4">
+              <main className="container mx-auto mt-4 max-w-7xl flex-grow">
                 {children}
               </main>
               <Footer />

@@ -2,13 +2,13 @@ import Link from 'next/link';
 import { memo } from 'react';
 
 const Separator = () => (
-  <div className="hidden lg:block mx-2 h-3 border-l border-white/20" />
+  <div className="mx-2 hidden h-3 border-l border-white/20 lg:block" />
 );
 
 const Footer = memo(() => {
   return (
-    <footer className="flex flex-col lg:flex-row items-center justify-center w-full py-3 mt-4">
-      <span className="text-[10px] text-white/60 text-center">
+    <footer className="mt-4 flex w-full flex-col items-center justify-center py-3 lg:flex-row">
+      <span className="text-center text-[10px] text-white/60">
         Todo o material é disponibilizado para fins educacionais e de
         preservação cultural, sem fins lucrativos
       </span>
@@ -16,7 +16,7 @@ const Footer = memo(() => {
       <Link
         href="https://github.com/diogomartino/osgatos"
         target="_blank"
-        className="text-[10px] text-white/60 hover:text-white transition-colors"
+        className="text-[10px] text-white/60 transition-colors hover:text-white"
       >
         Github
       </Link>
@@ -24,7 +24,7 @@ const Footer = memo(() => {
       <Link
         href="mailto:geral@osgatos.net"
         target="_blank"
-        className="text-[10px] text-white/60 hover:text-white transition-colors"
+        className="text-[10px] text-white/60 transition-colors hover:text-white"
       >
         Contacto
       </Link>

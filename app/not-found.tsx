@@ -5,7 +5,7 @@ import notFoundGif from '../public/notfound.gif';
 
 export default function NotFound() {
   return (
-    <div className="flex flex-col justify-center items-center gap-6 h-full">
+    <div className="flex h-full flex-col items-center justify-center gap-6">
       <div className="flex flex-col items-center justify-center">
         <span className="text-8xl font-bold">404</span>
         <span className="text-sm">Essa página não existe.</span>

@@ -17,13 +17,14 @@ const VideoCard = memo(
 
     const cardContent = (
       <div
-        className="group relative aspect-[16/9] w-full cursor-pointer overflow-hidden rounded-md bg-zinc-900 shadow-lg transition-transform duration-200 hover:scale-101 hover:shadow-2xl"
+        className="group relative aspect-[16/9] w-full max-w-[290px] cursor-pointer overflow-hidden rounded-md bg-zinc-900 shadow-lg transition-transform duration-200 hover:scale-101 hover:shadow-2xl sm:max-w-[340px] md:max-w-[400px] lg:max-w-[480px] xl:max-w-[640px]"
         tabIndex={0}
       >
         <NextImage
           src={thumbnailUrl}
           alt={title}
           fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
           className="object-cover object-center transition-opacity duration-200 group-hover:opacity-90"
           quality={60}
         />

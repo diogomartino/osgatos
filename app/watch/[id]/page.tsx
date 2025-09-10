@@ -27,7 +27,7 @@ export async function generateMetadata({
 
   const youtubeId = video.videoUrl.split('/').pop();
   const description = video.transcript.slice(0, 160);
-  const thumbnail = getFileUrl(video, 'thumbnail');
+  const thumbnail = getFileUrl(video, video.thumbnail);
 
   return {
     title: `Gato Fedorento - ${video.title}`,
@@ -143,7 +143,7 @@ export default async function Page({ params }: TPageProps) {
       <VideoJsonLd
         title={`Gato Fedorento - ${video.title}`}
         description={video.transcript.slice(0, 160)}
-        thumbnailUrl={getFileUrl(video, video?.thumbnail)}
+        thumbnailUrl={getFileUrl(video, video.thumbnail)}
         uploadDate={new Date(video.created).toISOString()}
         duration={video.duration}
         youtubeUrl={video.videoUrl}

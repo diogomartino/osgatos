@@ -31,11 +31,13 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning lang="en">
       <head>
-        <script
-          defer
-          src={process.env.NEXT_PUBLIC_UMAMI_SCRIPT}
-          data-website-id={process.env.NEXT_PUBLIC_UMAMI_ID}
-        ></script>
+        {process.env.NEXT_PUBLIC_UMAMI_SCRIPT && (
+          <script
+            defer
+            src={process.env.NEXT_PUBLIC_UMAMI_SCRIPT}
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_ID}
+          ></script>
+        )}
       </head>
       <ViewTransition>
         <body

@@ -17,11 +17,12 @@ const Poster = memo(({ title, imageUrl }: TPosterProps) => {
         alt="TV Show Poster"
         fill
         className="object-cover object-center transition-opacity duration-300 group-hover:opacity-90"
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
         priority
       />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-black/15 to-transparent" />
       <div className="relative w-full p-5 text-center">
-        <h2 className="mb-3 text-sm font-bold text-white drop-shadow transition-colors duration-300 lg:text-2xl">
+        <h2 className="mb-3 rounded bg-zinc-800/40 px-2 py-0.5 text-sm font-bold text-white drop-shadow transition-colors duration-300 lg:text-xl">
           {title}
         </h2>
       </div>

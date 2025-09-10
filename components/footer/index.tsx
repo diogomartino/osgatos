@@ -7,8 +7,8 @@ const Separator = () => (
 
 const Footer = memo(() => {
   return (
-    <footer className="mt-4 flex w-full flex-col items-center justify-center py-3 lg:flex-row">
-      <span className="text-center text-[10px] text-white/60">
+    <footer className="mt-4 flex w-full flex-col gap-2 items-center justify-center py-3 lg:flex-row">
+      <span className="text-center text-xs text-white/60">
         Todo o material é disponibilizado para fins educacionais e de
         preservação cultural, sem fins lucrativos
       </span>
@@ -16,7 +16,7 @@ const Footer = memo(() => {
       <Link
         href="https://github.com/diogomartino/osgatos"
         target="_blank"
-        className="text-[10px] text-white/60 transition-colors hover:text-white"
+        className="text-xs text-white/60 transition-colors hover:text-white"
       >
         Github
       </Link>
@@ -24,7 +24,7 @@ const Footer = memo(() => {
       <Link
         href="mailto:geral@osgatos.net"
         target="_blank"
-        className="text-[10px] text-white/60 transition-colors hover:text-white"
+        className="text-xs text-white/60 transition-colors hover:text-white"
       >
         Contacto
       </Link>

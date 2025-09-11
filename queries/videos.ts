@@ -9,9 +9,11 @@ const getVideoById = async (id: string): Promise<TVideo | undefined> =>
     async () => {
       try {
         const pb = await getPb();
+
         const video = await pb
           .collection('videos')
           .getFirstListItem<TVideo>(`id="${id}"`);
+
         return video;
       } catch {
         return undefined;
@@ -30,8 +32,6 @@ const getPreviousAndNextVideoById = async (
   unstable_cache(
     async () => {
       try {
-        console.log('querying db: getPreviousAndNextVideoById', videoId);
-
         const pb = await getPb();
 
         const currentVideo = await pb
@@ -42,14 +42,14 @@ const getPreviousAndNextVideoById = async (
           pb
             .collection('videos')
             .getFirstListItem<TVideo>(
-              `show="${currentVideo.show}" && id < "${videoId}"`,
+              `show="${currentVideo.show}" && created < "${currentVideo.created}"`,
               { sort: '-created' }
             )
             .catch(() => null),
           pb
             .collection('videos')
             .getFirstListItem<TVideo>(
-              `show="${currentVideo.show}" && id > "${videoId}"`,
+              `show="${currentVideo.show}" && created > "${currentVideo.created}"`,
               { sort: 'created' }
             )
             .catch(() => null)
@@ -71,8 +71,6 @@ const getVideosByShow = (showId: string): Promise<TVideo[]> =>
   unstable_cache(
     async () => {
       try {
-        console.log('querying db: getVideosByShow', showId);
-
         const pb = await getPb();
 
         const videos = await pb.collection('videos').getFullList<TVideo>({
@@ -93,8 +91,6 @@ const getAllVideos = async (): Promise<TVideo[]> =>
   unstable_cache(
     async () => {
       try {
-        console.log('querying db: getAllVideos');
-
         const pb = await getPb();
         const videos = await pb.collection('videos').getFullList<TVideo>({
           expand: 'show',

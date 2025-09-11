@@ -37,7 +37,7 @@ export async function generateMetadata({
       title: video.title,
       description,
       url: `${process.env.NEXT_PUBLIC_URL}/videos/${video.slug}`,
-      siteName: 'My Video Platform',
+      siteName: 'OsGatos.net',
       images: [thumbnail],
       videos: [
         {
@@ -52,9 +52,7 @@ export async function generateMetadata({
       card: 'player',
       title: video.title,
       description,
-      images: [thumbnail],
-      site: '@YourTwitterHandle',
-      creator: '@YourTwitterHandle'
+      images: [thumbnail]
     }
   };
 }

@@ -8,13 +8,13 @@ type TPosterProps = {
 
 const Poster = memo(({ title, imageUrl }: TPosterProps) => {
   return (
-    <div className="group relative flex h-[190px] w-[140px] cursor-pointer flex-col items-center justify-end overflow-hidden rounded-md bg-black shadow-2xl transition-transform duration-300 hover:scale-105 hover:shadow-[0_8px_32px_rgba(0,0,0,0.45)] md:h-[315px] md:w-[210px] lg:h-[360px] lg:w-[240px]">
+    <div className="group relative flex h-[190px] w-[140px] cursor-pointer flex-col items-center justify-end overflow-hidden rounded-md bg-black shadow-2xl transition-transform duration-300 hover:scale-105 hover:shadow-[0_8px_32px_rgba(0,0,0,0.45)] md:h-[315px] md:w-[210px] lg:h-[400px] lg:w-[300px]">
       <NextImage
         src={imageUrl}
         alt="TV Show Poster"
         fill
         className="object-cover object-center transition-opacity duration-300 group-hover:opacity-90"
-        sizes="(max-width: 768px) 140px, (max-width: 1024px) 210px, 240px"
+        sizes="(max-width: 768px) 140px, (max-width: 1024px) 210px, 300px"
         priority
         fetchPriority="high"
         quality={60}

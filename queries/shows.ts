@@ -10,7 +10,7 @@ const getShows = async (): Promise<TShow[]> =>
       const pb = await getPb();
 
       const shows = await pb.collection('shows').getFullList<TShow>({
-        sort: '-title',
+        sort: 'year',
         filter: 'public=true'
       });
 

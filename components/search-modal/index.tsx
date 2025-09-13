@@ -5,10 +5,9 @@ import { Input } from '@heroui/input';
 import { Modal, ModalContent } from '@heroui/modal';
 import { Tooltip } from '@heroui/tooltip';
 import { debounce } from 'lodash';
-import { HelpCircle, Search } from 'lucide-react';
+import { HelpCircle, Search, X } from 'lucide-react';
 import { memo, useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { useModalHistory } from './hooks';
 import { MenuItem } from './menu-item';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -17,8 +16,6 @@ const SearchModal = memo(() => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState(search);
-
-  useModalHistory(open, () => setOpen(false));
 
   const debouncedSetSearch = useMemo(
     () =>
@@ -74,6 +71,14 @@ const SearchModal = memo(() => {
       >
         <ModalContent className="flex items-center justify-center p-0">
           <div className="bg-background text-foreground fixed inset-0 flex h-screen max-h-screen w-full max-w-full flex-col shadow-lg sm:static sm:h-[600px] sm:max-h-[600px] sm:w-[480px] sm:rounded-xl">
+            <div className="flex w-full justify-end">
+              <X
+                size="1.1rem"
+                className="mt-2 cursor-pointer text-zinc-400"
+                onClick={() => setOpen(false)}
+              />
+            </div>
+
             <div className="flex w-full items-center">
               <Input
                 autoFocus

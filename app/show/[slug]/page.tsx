@@ -8,6 +8,8 @@ import { TVideo } from '@/types/db';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+export const revalidate = 604800; // 1 week
+
 type TGenerateMetadataProps = {
   params: Promise<{ slug: string }>;
 };

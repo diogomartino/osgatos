@@ -1,5 +1,5 @@
 import { CacheKey } from '@/statics';
-import { revalidateTag } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 const serverKey = process.env.CLEAR_CACHE_KEY;
 
@@ -11,6 +11,9 @@ export async function GET(request: Request) {
     Object.values(CacheKey).forEach((tag) => {
       revalidateTag(tag);
     });
+
+    revalidatePath('/watch/[id]', 'page');
+    revalidatePath('/show/[slug]', 'page');
 
     return Response.json({ success: true });
   }

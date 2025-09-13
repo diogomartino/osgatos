@@ -1,35 +1,23 @@
-FROM jarredsumner/bun:latest AS base
-
+FROM oven/bun:latest AS base
 WORKDIR /app
 
-FROM base AS deps
-
-COPY package.json bun.lock ./
+COPY . .
 
 RUN bun install
 
-FROM base AS builder
-WORKDIR /app
+ARG NEXT_PUBLIC_PB_URL
+ARG NEXT_PUBLIC_UMAMI_SCRIPT
+ARG NEXT_PUBLIC_UMAMI_ID
+ARG NEXT_PUBLIC_URL
 
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+ENV NEXT_PUBLIC_PB_URL=$NEXT_PUBLIC_PB_URL
+ENV NEXT_PUBLIC_UMAMI_SCRIPT=$NEXT_PUBLIC_UMAMI_SCRIPT
+ENV NEXT_PUBLIC_UMAMI_ID=$NEXT_PUBLIC_UMAMI_ID
+ENV NEXT_PUBLIC_URL=$NEXT_PUBLIC_URL
 
-RUN bun run build
-
-FROM base AS runner
-WORKDIR /app
-
-RUN addgroup --system --gid 1001 bunsh && \
-    adduser --system --uid 1001 nextjs
-
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:bunsh /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:bunsh /app/.next/static ./.next/static
-
-USER nextjs
-
-EXPOSE 3000
+ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+EXPOSE 3000
 
-CMD ["bun", "run", "start"]
+CMD ["bun", "start"]

@@ -9,13 +9,11 @@ export async function GET(request: Request) {
 
   if (key && serverKey && key === serverKey) {
     Object.values(CacheKey).forEach((tag) => {
-      console.log('revalidating tag:', tag);
-
       revalidateTag(tag);
     });
 
     return Response.json({ success: true });
   }
 
-  return Response.json({ success: false, lol: process.env });
+  return Response.json({ success: false });
 }

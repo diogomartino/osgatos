@@ -11,6 +11,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
+export const revalidate = 604800; // 1 week
+
 type TGenerateMetadataProps = {
   params: Promise<{ id: string }>;
 };

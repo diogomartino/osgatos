@@ -4,9 +4,8 @@ import { fontSans } from '@/config/fonts';
 import '@/globals.css';
 import clsx from 'clsx';
 import { Metadata, Viewport } from 'next';
-import { Providers } from './providers';
-// @ts-expect-error idfk
 import { unstable_ViewTransition as ViewTransition } from 'react';
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: 'Gato Fedorento',

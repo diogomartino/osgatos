@@ -1,25 +1,24 @@
-import { Navbar, NavbarBrand, NavbarContent } from '@heroui/navbar';
 import Link from 'next/link';
 import { memo } from 'react';
-import { SearchModal } from '../search-modal';
+import { SearchBar } from '../search-bar';
 
 const Topbar = memo(() => {
   return (
-    <Navbar>
-      <NavbarContent as="div">
-        <NavbarBrand>
-          <Link className="text-lg font-bold lg:text-2xl" href="/">
+    <nav className="border-divider bg-background w-full border-b">
+      <div className="flex w-full items-center gap-4 px-4 py-3 lg:px-8">
+        <div className="hidden lg:block lg:min-w-[200px]">
+          <Link className="text-2xl font-bold" href="/">
             OsGatos<span className="text-xs">.net</span>
           </Link>
-        </NavbarBrand>
-      </NavbarContent>
+        </div>
 
-      <NavbarContent justify="center" as="div">
-        <SearchModal />
-      </NavbarContent>
+        <div className="flex flex-1 justify-center">
+          <SearchBar />
+        </div>
 
-      <NavbarContent justify="end" as="div" />
-    </Navbar>
+        <div className="hidden lg:block lg:min-w-[200px]" />
+      </div>
+    </nav>
   );
 });
 

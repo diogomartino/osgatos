@@ -22,8 +22,8 @@ const Info = memo(({ label, duration, labelHref }: TInfoProps) => {
   return (
     <div className="flex items-center justify-center gap-2">
       {labelContent}
-      <span className="text-sm opacity-70">•</span>
-      <span className="text-sm">{Math.floor(duration / 60)} min</span>
+      <span className="text-sm text-foreground/60">•</span>
+      <span className="text-sm text-foreground/80">{Math.floor(duration / 60)} min</span>
     </div>
   );
 });

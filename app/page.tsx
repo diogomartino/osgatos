@@ -66,7 +66,7 @@ export default async function Home() {
   const shows = await getShows();
 
   return (
-    <section className="flex flex-wrap items-start justify-center gap-4 lg:h-full lg:items-center">
+    <section className="flex flex-wrap items-start justify-center gap-6 lg:h-full lg:items-center">
       {shows.map((show) => (
         <Link key={show.id} href={`/show/${show.slug}`}>
           <Poster

@@ -87,26 +87,21 @@ const getVideosByShow = (showId: string): Promise<TVideo[]> =>
     { revalidate: REVALIDATE_TIME, tags: [CacheKey.VIDEOS_BY_SHOW] }
   )();
 
-const getAllVideos = async (): Promise<TVideo[]> =>
-  unstable_cache(
-    async () => {
-      try {
-        const pb = await getPb();
-        const videos = await pb.collection('videos').getFullList<TVideo>({
-          expand: 'show',
-          sort: 'created'
-        });
-        return videos;
-      } catch {
-        return [];
-      }
-    },
-    [CacheKey.ALL_VIDEOS],
-    {
-      revalidate: REVALIDATE_TIME,
-      tags: [CacheKey.ALL_VIDEOS]
-    }
-  )();
+// this one is uncached because it's hitting the nextjs hard limit of 2mb
+const getAllVideos = async (): Promise<TVideo[]> => {
+  try {
+    const pb = await getPb();
+
+    const videos = await pb.collection('videos').getFullList<TVideo>({
+      expand: 'show',
+      sort: 'created'
+    });
+
+    return videos;
+  } catch {
+    return [];
+  }
+};
 
 export {
   getAllVideos,

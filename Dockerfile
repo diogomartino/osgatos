@@ -1,20 +1,9 @@
-FROM oven/bun:latest AS builder
+# TODO: improve this later
 
+FROM node:20-alpine AS builder
 WORKDIR /app
-
-COPY package.json bun.lock ./
-RUN bun install
 
 COPY . .
-
-ENV NODE_ENV=production
-RUN bun run build
-
-FROM oven/bun:latest AS runner
-
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
 
 ARG NEXT_PUBLIC_URL
 ARG NEXT_PUBLIC_PB_URL
@@ -32,12 +21,15 @@ ENV PB_USERNAME=$PB_USERNAME
 ENV PB_PASSWORD=$PB_PASSWORD
 ENV CLEAR_CACHE_KEY=$CLEAR_CACHE_KEY
 
-ENV NODE_ENV=production
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
+RUN npm install
 
-COPY --from=builder /app ./
+ENV NODE_ENV=production
+
+RUN npm run build
 
 EXPOSE 3000
 
-CMD ["bun", "run", "start"]
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["npm", "start"]

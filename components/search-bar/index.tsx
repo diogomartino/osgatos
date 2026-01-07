@@ -49,7 +49,20 @@ const SearchBar = memo(() => {
     debouncedSearch
       ? `/api/search?q=${encodeURIComponent(debouncedSearch)}`
       : null,
-    fetcher
+    fetcher,
+    {
+      onSuccess(_, key) {
+        const url = new URL(key, window.location.href);
+        const query = url.searchParams.get('q') || '';
+        const umami = (window as any).umami;
+
+        if (umami) {
+          umami.track('search', {
+            query
+          });
+        }
+      }
+    }
   );
 
   useEffect(() => {

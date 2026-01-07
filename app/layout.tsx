@@ -22,6 +22,10 @@ export const viewport: Viewport = {
   ]
 };
 
+const enableAnalytics =
+  process.env.NEXT_PUBLIC_UMAMI_SCRIPT &&
+  process.env.NODE_ENV !== 'development';
+
 export default function RootLayout({
   children
 }: {
@@ -30,7 +34,7 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning lang="en">
       <head>
-        {process.env.NEXT_PUBLIC_UMAMI_SCRIPT && (
+        {enableAnalytics && (
           <script
             defer
             src={process.env.NEXT_PUBLIC_UMAMI_SCRIPT}

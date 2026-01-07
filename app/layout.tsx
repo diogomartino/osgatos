@@ -22,6 +22,10 @@ export const viewport: Viewport = {
   ]
 };
 
+const enableAnalytics =
+  process.env.NEXT_PUBLIC_UMAMI_SCRIPT &&
+  process.env.NODE_ENV !== 'development';
+
 export default function RootLayout({
   children
 }: {
@@ -30,7 +34,7 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning lang="en">
       <head>
-        {process.env.NEXT_PUBLIC_UMAMI_SCRIPT && (
+        {enableAnalytics && (
           <script
             defer
             src={process.env.NEXT_PUBLIC_UMAMI_SCRIPT}
@@ -48,7 +52,7 @@ export default function RootLayout({
           <Providers themeProps={{ attribute: 'class', defaultTheme: 'dark' }}>
             <div className="relative flex h-dvh flex-col">
               <Topbar />
-              <main className="container mx-auto mt-4 max-w-7xl flex-grow">
+              <main className="container mx-auto mt-6 max-w-7xl flex-grow px-4 lg:px-8">
                 {children}
               </main>
               <Footer />

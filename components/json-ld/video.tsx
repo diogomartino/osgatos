@@ -1,5 +1,3 @@
-// components/seo/VideoJsonLd.tsx
-
 type TVideoJsonLdProps = {
   title: string;
   description: string;

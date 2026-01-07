@@ -93,8 +93,8 @@ export default async function Page({ params }: TPageProps) {
         {specialVideos.length > 0 && (
           <>
             <div>
-              <div className="border-t border-gray-300 dark:border-gray-700" />
-              <h2 className="col-span-full mt-4 text-xl font-semibold">
+              <div className="border-divider border-t" />
+              <h2 className="col-span-full mt-6 text-xl font-semibold">
                 Especiais
               </h2>
             </div>

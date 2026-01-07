@@ -12,6 +12,8 @@ RUN bun run build
 
 FROM oven/bun:latest AS runner
 
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 ARG NEXT_PUBLIC_URL

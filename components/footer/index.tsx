@@ -15,6 +15,14 @@ const Footer = memo(() => {
       </span>
       <Separator />
       <Link
+        href="https://www.reddit.com/r/gatofedorento"
+        target="_blank"
+        className="text-foreground/60 hover:text-foreground text-xs transition-colors"
+      >
+        Reddit
+      </Link>
+      <Separator />
+      <Link
         href="https://github.com/diogomartino/osgatos"
         target="_blank"
         className="text-foreground/60 hover:text-foreground text-xs transition-colors"

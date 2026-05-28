@@ -84,6 +84,24 @@
 		border-radius: inherit;
 		pointer-events: none;
 	}
+
+	.video-player,
+	.video-player [data-ntpc='YouTubeEmbed'],
+	.video-player lite-youtube {
+		height: 100% !important;
+		width: 100% !important;
+	}
+
+	.video-player [data-ntpc='YouTubeEmbed'],
+	.video-player lite-youtube {
+		display: block;
+		max-width: none !important;
+	}
+
+	.video-player lite-youtube iframe {
+		height: 100%;
+		width: 100%;
+	}
 }
 
 @media (prefers-reduced-motion: no-preference) {

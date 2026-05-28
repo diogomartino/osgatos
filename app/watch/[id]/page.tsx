@@ -107,7 +107,7 @@ export default async function Page({ params }: TPageProps) {
     <>
       <div className="mx-auto -mt-2 flex w-full max-w-[100rem] flex-col gap-4 lg:-mt-4 lg:-mb-4 lg:flex-1 lg:justify-center lg:gap-4">
         <section
-          className="bg-content1 shadow-frame flex items-center justify-center overflow-hidden rounded-lg"
+          className="bg-content1 shadow-frame flex items-center justify-center overflow-hidden rounded-lg lg:self-center"
           data-shell-frame="true"
         >
           <div className="aspect-video w-full bg-black lg:h-[54vh] lg:w-auto xl:h-[58vh]">

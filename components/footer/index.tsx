@@ -1,42 +1,52 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { memo } from 'react';
 
-const Separator = () => (
-  <div className="border-foreground/20 mx-2 hidden h-3 border-l lg:block" />
-);
-
 const Footer = memo(() => {
+  const pathname = usePathname();
+
+  if (pathname?.startsWith('/watch/')) {
+    return null;
+  }
+
   return (
-    <footer className="mt-6 flex w-full flex-col items-center justify-center gap-2 py-4 lg:flex-row">
-      <span className="text-foreground/60 text-center text-xs">
-        Este site não é oficial dos Gato Fedorento. Todo o material é
-        disponibilizado para fins educacionais e de preservação cultural, sem
-        fins lucrativos
-      </span>
-      <Separator />
-      <Link
-        href="https://www.reddit.com/r/gatofedorento"
-        target="_blank"
-        className="text-foreground/60 hover:text-foreground text-xs transition-colors"
-      >
-        Reddit
-      </Link>
-      <Separator />
-      <Link
-        href="https://github.com/diogomartino/osgatos"
-        target="_blank"
-        className="text-foreground/60 hover:text-foreground text-xs transition-colors"
-      >
-        Github
-      </Link>
-      <Separator />
-      <Link
-        href="mailto:geral@osgatos.net"
-        target="_blank"
-        className="text-foreground/60 hover:text-foreground text-xs transition-colors"
-      >
-        Contacto
-      </Link>
+    <footer className="mx-auto mt-auto flex w-full max-w-[100rem] flex-col gap-4 px-4 pt-12 pb-6 md:px-6 lg:px-8 lg:pb-8">
+      <div className="flex flex-col gap-4 border-t border-white/8 pt-4 lg:flex-row lg:items-center lg:justify-between">
+        <p className="text-default-500 max-w-2xl text-xs">
+          Este site não é oficial dos Gato Fedorento. Todo o material é
+          disponibilizado para fins educacionais e de preservação cultural, sem
+          fins lucrativos
+        </p>
+
+        <div className="text-default-500 flex flex-wrap items-center gap-1 text-sm">
+          <Link
+            href="https://www.reddit.com/r/gatofedorento"
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-foreground px-2 py-1"
+          >
+            Reddit
+          </Link>
+          <Link
+            href="https://github.com/diogomartino/osgatos"
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-foreground px-2 py-1"
+          >
+            Github
+          </Link>
+          <Link
+            href="mailto:geral@osgatos.net"
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-foreground px-2 py-1"
+          >
+            Contacto
+          </Link>
+        </div>
+      </div>
     </footer>
   );
 });

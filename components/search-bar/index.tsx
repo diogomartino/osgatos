@@ -1,5 +1,6 @@
 'use client';
 
+import type { TUmamiWindow } from '@/types';
 import type { TVideo } from '@/types/db';
 import { Input } from '@heroui/input';
 import { debounce } from 'lodash';
@@ -39,8 +40,7 @@ const SearchBar = memo(() => {
     setIsOpen(false);
   }, []);
 
-  const onItemClick = useCallback((item: TVideo) => {
-    window.location.href = `/watch/${item.id}`;
+  const onItemClick = useCallback(() => {
     setSearch('');
     setIsOpen(false);
   }, []);
@@ -54,7 +54,7 @@ const SearchBar = memo(() => {
       onSuccess(_, key) {
         const url = new URL(key, window.location.href);
         const query = url.searchParams.get('q') || '';
-        const umami = (window as any).umami;
+        const umami = (window as TUmamiWindow).umami;
 
         if (umami) {
           umami.track('search', {
@@ -83,50 +83,60 @@ const SearchBar = memo(() => {
   }, []);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full max-w-[600px] lg:max-w-[500px]"
-    >
+    <div ref={containerRef} className="relative w-full max-w-[26rem]">
       <Input
         placeholder="Procura um sketch..."
         value={search}
         onValueChange={onValueChange}
         onFocus={() => search.length > 0 && setIsOpen(true)}
+        aria-label="Procurar sketches"
         className="w-full"
         classNames={{
-          input: 'text-sm lg:text-base',
-          inputWrapper: 'bg-default-100'
+          base: 'data-[hover=true]:opacity-100',
+          input:
+            'text-sm text-foreground placeholder:text-default-500 md:text-sm',
+          inputWrapper:
+            'rounded-md border border-white/8 bg-content1 px-3 min-h-11 shadow-none transition-colors duration-200 ease-editorial data-[hover=true]:bg-content2 data-[focus=true]:bg-content2'
         }}
         endContent={
           isOpen ? (
-            <X
-              className="text-foreground/60 hover:text-foreground/80 cursor-pointer transition-colors"
-              size="1rem"
+            <button
+              type="button"
+              aria-label="Limpar pesquisa"
               onClick={onClearSearch}
-            />
+              className="text-default-500 hover:text-foreground flex h-8 w-8 items-center justify-center rounded-sm"
+            >
+              <X size="1rem" />
+            </button>
           ) : (
-            <Search className="text-foreground/60" size="1rem" />
+            <span className="text-default-500 flex h-8 w-8 items-center justify-center rounded-sm">
+              <Search size="0.95rem" />
+            </span>
           )
         }
       />
 
       {isOpen && (
-        <div className="border-divider bg-content1 absolute top-full left-0 z-50 mt-2 w-full rounded-lg border shadow-lg">
-          <div className="max-h-[70vh] overflow-y-auto lg:max-h-[500px]">
+        <div className="bg-content1 shadow-lift absolute top-full right-0 z-50 mt-2 w-full overflow-hidden rounded-md border border-white/8">
+          <div className="text-default-500 border-divider flex items-center justify-between border-b px-3 py-2 text-[0.64rem] font-semibold tracking-[0.22em] uppercase">
+            <span>Resultados</span>
+            {data && data.length > 0 ? <span>{data.length}</span> : null}
+          </div>
+          <div className="max-h-[70vh] overflow-y-auto p-2 lg:max-h-[32rem]">
             {isLoading && (
-              <div className="text-foreground/60 p-4 text-center text-sm">
+              <div className="text-default-500 p-4 text-center text-sm">
                 A carregar resultados...
               </div>
             )}
 
             {!isLoading && data?.length === 0 && (
-              <div className="text-foreground/60 p-4 text-center text-sm">
+              <div className="text-default-500 p-4 text-center text-sm">
                 Sem resultados.
               </div>
             )}
 
             {!isLoading && data && data.length > 0 && (
-              <div className="flex flex-col gap-1 p-2">
+              <div className="flex flex-col gap-1">
                 {data.map((item) => (
                   <MenuItem item={item} key={item.id} onClick={onItemClick} />
                 ))}

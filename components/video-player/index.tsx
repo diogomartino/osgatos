@@ -1,5 +1,6 @@
 'use client';
 
+import type { TUmamiWindow } from '@/types';
 import { memo, useEffect, useRef } from 'react';
 import 'video.js/dist/video-js.css';
 
@@ -9,18 +10,20 @@ type TVideoPlayerProps = {
   videoId: string;
 };
 
+type TVideoJsPlayer = ReturnType<(typeof import('video.js'))['default']>;
+
 const VideoPlayer = memo(({ url, className, videoId }: TVideoPlayerProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const playerRef = useRef<any | null>(null);
-  const initCounter = useRef(0);
+  const playerRef = useRef<TVideoJsPlayer | null>(null);
   const playedFirst = useRef(false);
 
   useEffect(() => {
+    const container = containerRef.current;
+
     let mounted = true;
-    const thisInit = ++initCounter.current;
 
     async function init() {
-      if (!containerRef.current || !mounted) return;
+      if (!container || !mounted) return;
 
       try {
         playerRef.current?.dispose();
@@ -29,18 +32,16 @@ const VideoPlayer = memo(({ url, className, videoId }: TVideoPlayerProps) => {
       }
 
       playerRef.current = null;
-      containerRef.current.innerHTML = '';
+      container.innerHTML = '';
 
       // dynamic import ensures this runs client-side and that the plugin
       // registers on the same videojs instance we're about to use
-      const vjsModule = await import('video.js');
-      const videojs = (vjsModule && (vjsModule as any).default) || vjsModule;
+      const { default: videojs } = await import('video.js');
 
       // @ts-expect-error no types
       await import('videojs-youtube');
 
-      // bail if a newer init started or component unmounted
-      if (!mounted || thisInit !== initCounter.current) return;
+      if (!mounted) return;
 
       // create fresh <video> element
       const videoEl = document.createElement('video');
@@ -48,7 +49,7 @@ const VideoPlayer = memo(({ url, className, videoId }: TVideoPlayerProps) => {
       videoEl.className = 'video-js vjs-big-play-centered';
       videoEl.setAttribute('playsInline', 'true');
       videoEl.setAttribute('preload', 'metadata');
-      containerRef.current.appendChild(videoEl);
+      container.appendChild(videoEl);
 
       // initialize player
       playerRef.current = videojs(videoEl, {
@@ -67,7 +68,7 @@ const VideoPlayer = memo(({ url, className, videoId }: TVideoPlayerProps) => {
         playerRef.current.on('play', () => {
           if (typeof window === 'undefined') return;
 
-          const umami = (window as any).umami;
+          const umami = (window as TUmamiWindow).umami;
 
           if (!playedFirst.current) {
             playedFirst.current = true;
@@ -89,8 +90,6 @@ const VideoPlayer = memo(({ url, className, videoId }: TVideoPlayerProps) => {
     return () => {
       mounted = false;
 
-      initCounter.current++;
-
       try {
         playerRef.current?.dispose();
       } catch {
@@ -99,8 +98,8 @@ const VideoPlayer = memo(({ url, className, videoId }: TVideoPlayerProps) => {
 
       playerRef.current = null;
 
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
+      if (container) {
+        container.innerHTML = '';
       }
     };
   }, [url, videoId]);

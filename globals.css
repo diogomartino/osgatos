@@ -1,3 +1,102 @@
 @import "tailwindcss";
 
-@config "./tailwind.config.js"
+@config "./tailwind.config.js";
+
+@layer base {
+	:root {
+		color-scheme: dark;
+	}
+
+	html {
+		background-color: hsl(var(--heroui-background));
+	}
+
+	body {
+		min-height: 100vh;
+		background:
+			linear-gradient(180deg, rgb(18 18 18 / 0.96), rgb(8 8 8 / 1) 28%);
+		color: hsl(var(--heroui-foreground));
+		font-family: var(--font-body);
+		line-height: 1.6;
+		text-rendering: optimizeLegibility;
+		position: relative;
+	}
+
+	body::before {
+		content: '';
+		position: fixed;
+		inset: 0;
+		pointer-events: none;
+		background: linear-gradient(180deg, rgb(255 255 255 / 0.015), transparent 22%);
+		opacity: 1;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-family: var(--font-body);
+		font-weight: 700;
+		line-height: 1.12;
+		letter-spacing: -0.03em;
+		text-wrap: balance;
+	}
+
+	p {
+		max-width: 68ch;
+		color: rgb(220 220 216 / 0.82);
+		text-wrap: pretty;
+	}
+
+	::selection {
+		background-color: rgb(255 255 255 / 0.18);
+		color: hsl(var(--heroui-foreground));
+	}
+
+	a,
+	button,
+	input,
+	textarea,
+	select {
+		outline-color: transparent;
+	}
+
+	a:focus-visible,
+	button:focus-visible,
+	input:focus-visible,
+	textarea:focus-visible,
+	select:focus-visible {
+		outline: 2px solid hsl(var(--heroui-focus));
+		outline-offset: 2px;
+	}
+
+	[data-shell-frame='true'] {
+		position: relative;
+	}
+
+	[data-shell-frame='true']::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border: 1px solid rgb(255 255 255 / 0.06);
+		border-radius: inherit;
+		pointer-events: none;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@layer base {
+		a,
+		button,
+		input,
+		textarea,
+		select,
+		[data-interactive='true'] {
+			transition-duration: 180ms;
+			transition-property: color, background-color, border-color, opacity, transform, box-shadow;
+			transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+		}
+	}
+}

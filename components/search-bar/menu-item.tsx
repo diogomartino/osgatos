@@ -1,47 +1,58 @@
 import { getFileUrl } from '@/helpers/get-file-url';
 import type { TVideo } from '@/types/db';
 import NextImage from 'next/image';
+import Link from 'next/link';
 import { memo } from 'react';
 
 type TMenuItemProps = {
   item: TVideo;
-  onClick?: (item: TVideo) => void;
+  onClick?: () => void;
 };
 
 const MenuItem = memo(({ item, onClick }: TMenuItemProps) => {
+  const minutes = Math.floor(item.duration / 60);
+  const seconds = (item.duration % 60).toString().padStart(2, '0');
+
   return (
-    <div
-      className="group flex h-16 min-h-[64px] w-full cursor-pointer items-center rounded-md p-2 transition-colors hover:bg-default-100"
-      onClick={() => onClick?.(item)}
+    <Link
+      href={`/watch/${item.id}`}
+      className="group flex min-h-[4.75rem] w-full items-center gap-3 px-3 py-2.5 hover:bg-white/4"
+      onClick={onClick}
+      data-interactive="true"
     >
-      <div className="relative h-16 w-24 flex-shrink-0 overflow-hidden rounded-md bg-zinc-900">
+      <div className="bg-content2 relative h-[4rem] w-[6.25rem] flex-shrink-0 overflow-hidden rounded-md">
         <NextImage
           src={getFileUrl(item, item.thumbnail)}
-          alt={item.title}
+          alt={`Miniatura do sketch ${item.title}`}
           fill
-          className="absolute inset-0 object-cover object-center"
+          className="ease-editorial absolute inset-0 object-cover object-center transition-transform duration-200 group-hover:scale-[1.03]"
           sizes="96px"
           quality={40}
           loading="lazy"
         />
+        <span className="absolute right-1.5 bottom-1.5 rounded-full bg-black/70 px-2 py-0.5 text-[0.62rem] font-semibold tracking-[0.14em] text-white uppercase">
+          {minutes}:{seconds}
+        </span>
       </div>
-      <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 pl-4">
-        <span className="text-foreground line-clamp-2 text-sm font-semibold">
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
+        <span className="text-foreground ease-editorial group-hover:text-primary line-clamp-2 text-sm transition-colors duration-200 md:text-[0.98rem]">
           {item.title}
         </span>
-        <div className="mt-0.5 flex items-center gap-2">
-          <span className="text-foreground/60 font-mono text-xs">
-            {Math.floor(item.duration / 60)}:
-            {(item.duration % 60).toString().padStart(2, '0')}
-          </span>
-          {item.expand?.show?.title && (
-            <span className="text-foreground/50 max-w-[10rem] truncate text-xs italic">
-              Série {item.expand.show.title}
+        <div className="text-default-500 flex items-center gap-2 text-xs">
+          {item.expand?.show?.title ? (
+            <span className="max-w-[12rem] truncate">
+              {item.expand.show.title}
             </span>
-          )}
+          ) : null}
+          {item.expand?.show?.title ? (
+            <span className="bg-primary h-1 w-1 rounded-full" />
+          ) : null}
+          <span>
+            {minutes}:{seconds}
+          </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 });
 MenuItem.displayName = 'MenuItem';

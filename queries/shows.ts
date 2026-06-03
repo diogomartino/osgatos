@@ -31,7 +31,7 @@ const getShowBySlug = async (slug: string): Promise<TShow | undefined> =>
 
         const show = await pb
           .collection('shows')
-          .getFirstListItem<TShow>(`slug="${slug}"`);
+          .getFirstListItem<TShow>(`slug="${slug}" && public=true`);
 
         return show;
       } catch {
@@ -53,7 +53,7 @@ const getShowByVideoId = async (videoId: string): Promise<TShow | undefined> =>
 
         const video = await pb
           .collection('videos')
-          .getFirstListItem(`id="${videoId}"`);
+          .getFirstListItem(`id="${videoId}" && show.public=true`);
 
         if (!video) return undefined;
 

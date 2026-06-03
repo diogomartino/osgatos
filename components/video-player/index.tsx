@@ -1,7 +1,9 @@
 'use client';
 
-import { memo, useEffect, useRef } from 'react';
-import 'video.js/dist/video-js.css';
+import { getYoutubeId } from '@/helpers/get-youtube-id';
+import type { TUmamiWindow } from '@/types';
+import { YouTubeEmbed } from '@next/third-parties/google';
+import { memo, useCallback, useMemo, useRef } from 'react';
 
 type TVideoPlayerProps = {
   url: string;
@@ -10,107 +12,43 @@ type TVideoPlayerProps = {
 };
 
 const VideoPlayer = memo(({ url, className, videoId }: TVideoPlayerProps) => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const playerRef = useRef<any | null>(null);
-  const initCounter = useRef(0);
   const playedFirst = useRef(false);
+  const youtubeId = useMemo(() => getYoutubeId(url), [url]);
 
-  useEffect(() => {
-    let mounted = true;
-    const thisInit = ++initCounter.current;
+  const onPlay = useCallback(() => {
+    if (playedFirst.current || typeof window === 'undefined') return;
 
-    async function init() {
-      if (!containerRef.current || !mounted) return;
+    playedFirst.current = true;
 
-      try {
-        playerRef.current?.dispose();
-      } catch {
-        // ignore
-      }
+    const umami = (window as TUmamiWindow).umami;
 
-      playerRef.current = null;
-      containerRef.current.innerHTML = '';
-
-      // dynamic import ensures this runs client-side and that the plugin
-      // registers on the same videojs instance we're about to use
-      const vjsModule = await import('video.js');
-      const videojs = (vjsModule && (vjsModule as any).default) || vjsModule;
-
-      // @ts-expect-error no types
-      await import('videojs-youtube');
-
-      // bail if a newer init started or component unmounted
-      if (!mounted || thisInit !== initCounter.current) return;
-
-      // create fresh <video> element
-      const videoEl = document.createElement('video');
-
-      videoEl.className = 'video-js vjs-big-play-centered';
-      videoEl.setAttribute('playsInline', 'true');
-      videoEl.setAttribute('preload', 'metadata');
-      containerRef.current.appendChild(videoEl);
-
-      // initialize player
-      playerRef.current = videojs(videoEl, {
-        autoplay: false,
-        controls: true,
-        fluid: true,
-        techOrder: ['youtube'],
-        sources: [{ src: url, type: 'video/youtube' }],
-        youtube: {
-          modestbranding: 1,
-          iv_load_policy: 3
-        }
-      });
-
-      if (playerRef.current) {
-        playerRef.current.on('play', () => {
-          if (typeof window === 'undefined') return;
-
-          const umami = (window as any).umami;
-
-          if (!playedFirst.current) {
-            playedFirst.current = true;
-          }
-
-          if (umami) {
-            umami.track('play-video', {
-              videoId
-            });
-          }
-        });
-      }
-    }
-
-    init().catch((err) => {
-      console.error('VideoPlayer init failed:', err);
+    umami?.track('play-video', {
+      videoId
     });
+  }, [videoId]);
 
-    return () => {
-      mounted = false;
-
-      initCounter.current++;
-
-      try {
-        playerRef.current?.dispose();
-      } catch {
-        // ignore
-      }
-
-      playerRef.current = null;
-
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
-      }
-    };
-  }, [url, videoId]);
+  if (!youtubeId) {
+    return (
+      <div className={className ?? 'h-full w-full'}>
+        <div className="bg-content2 text-default-500 flex h-full w-full items-center justify-center text-sm">
+          Vídeo indisponível.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
-      data-vjs-player
-      ref={containerRef}
-      className={className ?? 'h-full w-full'}
-    />
+      className={className ?? 'video-player h-full w-full'}
+      onClickCapture={onPlay}
+    >
+      <YouTubeEmbed
+        videoid={youtubeId}
+        playlabel="Reproduzir video"
+        params="modestbranding=1&rel=0"
+        style="display:block;width:100%;height:100%;max-width:none;"
+      />
+    </div>
   );
 });
 VideoPlayer.displayName = 'VideoPlayer';

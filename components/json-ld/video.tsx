@@ -1,3 +1,5 @@
+import { getYoutubeId } from '@/helpers/get-youtube-id';
+
 type TVideoJsonLdProps = {
   title: string;
   description: string;
@@ -18,7 +20,10 @@ const VideoJsonLd = ({
   const isoDuration = duration
     ? `PT${Math.floor(Number(duration) / 60)}M${Number(duration) % 60}S`
     : undefined;
-  const youtubeId = youtubeUrl?.split('/').pop();
+  const youtubeId = getYoutubeId(youtubeUrl);
+  const embedUrl = youtubeId
+    ? `https://www.youtube.com/embed/${youtubeId}`
+    : undefined;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -27,7 +32,8 @@ const VideoJsonLd = ({
     description,
     thumbnailUrl: Array.isArray(thumbnailUrl) ? thumbnailUrl : [thumbnailUrl],
     uploadDate,
-    embedUrl: `https://www.youtube.com/embed/${youtubeId}`,
+    ...(embedUrl && { embedUrl }),
+    contentUrl: youtubeUrl,
     ...(isoDuration && { duration: isoDuration })
   };
 

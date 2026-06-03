@@ -12,12 +12,28 @@ const normalize = (text: string) =>
 
 const buildSearchData = (videos: TVideo[]) =>
   videos.flatMap((video) => {
-    const sentences = video.transcript
-      ? video.transcript.split(/[.!?]\s+/)
-      : [];
+    const transcript =
+      video.transcriptFinal || video.transcriptv2 || video.transcript || '';
+    const sentences = transcript ? transcript.split(/[.!?]\s+/) : [];
+
+    const baseSearchData = {
+      ...video,
+      searchTitle: normalize(video.title),
+      searchShow: normalize(video.expand?.show?.title ?? '')
+    };
+
+    if (sentences.length === 0) {
+      return [
+        {
+          ...baseSearchData,
+          searchChunk: '',
+          chunkId: 0
+        }
+      ];
+    }
 
     return sentences.map((sentence, idx) => ({
-      ...video,
+      ...baseSearchData,
       searchChunk: normalize(sentence),
       chunkId: idx
     }));
@@ -27,8 +43,9 @@ const options: IFuseOptions<ReturnType<typeof buildSearchData>[0]> = {
   includeScore: true,
   shouldSort: true,
   keys: [
-    { name: 'title', weight: 0.8 },
-    { name: 'searchChunk', weight: 0.2 }
+    { name: 'searchTitle', weight: 0.75 },
+    { name: 'searchShow', weight: 0.15 },
+    { name: 'searchChunk', weight: 0.1 }
   ],
   threshold: 0.2,
   ignoreLocation: true,

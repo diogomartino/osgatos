@@ -5,21 +5,18 @@ import {
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   useDisclosure
 } from '@heroui/modal';
-import { Captions, Check, ExternalLink } from 'lucide-react';
+import { Captions, Check, Github } from 'lucide-react';
 
 type TTranscriptDialogProps = {
-  title: string;
   transcript: string;
   transcriptFileUrl: string;
   source: 'transcript' | 'transcriptv2' | 'transcriptFinal';
 };
 
 const TranscriptDialog = ({
-  title,
   transcript,
   transcriptFileUrl,
   source
@@ -76,27 +73,26 @@ const TranscriptDialog = ({
                   {sourceLabel}
                 </span>
               )}
+              <Button
+                isIconOnly
+                as="a"
+                href={transcriptFileUrl}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Ver ficheiro da transcrição no GitHub"
+                size="sm"
+                variant="light"
+                className="text-default-500 hover:text-foreground h-7 w-7 min-w-0 rounded-full"
+              >
+                <Github size="1rem" />
+              </Button>
             </div>
-            <span>{title}</span>
           </ModalHeader>
           <ModalBody>
             <p className="text-foreground leading-6 whitespace-pre-wrap">
               {transcript}
             </p>
           </ModalBody>
-          <ModalFooter className="border-t border-white/8">
-            <Button
-              as="a"
-              href={transcriptFileUrl}
-              target="_blank"
-              rel="noreferrer"
-              size="sm"
-              variant="flat"
-              startContent={<ExternalLink size="0.95rem" />}
-            >
-              Ver ficheiro
-            </Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
     </div>

@@ -22,7 +22,7 @@ console.log(`Fetched ${videos.length} videos from PocketBase.`);
 
 const transcriptsPath = path.join(process.cwd(), 'scripts', 'transcripts');
 
-console.log(`Saving transcripts to ${transcriptsPath}...`);
+console.log(`Syncing transcripts in ${transcriptsPath}...`);
 
 let savedCount = 0;
 

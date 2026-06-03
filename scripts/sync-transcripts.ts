@@ -61,3 +61,28 @@ for (const video of videos) {
 }
 
 console.log(`Finished syncing transcripts. Updated ${savedCount} videos.`);
+
+if (savedCount > 0) {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_URL}/api/clear-cache?key=${process.env.CLEAR_CACHE_KEY}`
+    );
+
+    const data = await response.json();
+
+    if (data.success) {
+      console.log(
+        'Cache revalidation triggered successfully after syncing transcripts.'
+      );
+    } else {
+      console.error(
+        'Failed to trigger cache revalidation after syncing transcripts: Invalid response from server.'
+      );
+    }
+  } catch (error) {
+    console.error(
+      'Failed to revalidate cache after syncing transcripts:',
+      error
+    );
+  }
+}

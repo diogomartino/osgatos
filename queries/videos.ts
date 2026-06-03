@@ -12,7 +12,7 @@ const getVideoById = async (id: string): Promise<TVideo | undefined> =>
 
         const video = await pb
           .collection('videos')
-          .getFirstListItem<TVideo>(`id="${id}"`);
+          .getFirstListItem<TVideo>(`id="${id}" && show.public=true`);
 
         return video;
       } catch {
@@ -36,20 +36,20 @@ const getPreviousAndNextVideoById = async (
 
         const currentVideo = await pb
           .collection('videos')
-          .getFirstListItem<TVideo>(`id="${videoId}"`);
+          .getFirstListItem<TVideo>(`id="${videoId}" && show.public=true`);
 
         const [previous, next] = await Promise.all([
           pb
             .collection('videos')
             .getFirstListItem<TVideo>(
-              `show="${currentVideo.show}" && created < "${currentVideo.created}"`,
+              `show="${currentVideo.show}" && show.public=true && created < "${currentVideo.created}"`,
               { sort: '-created' }
             )
             .catch(() => null),
           pb
             .collection('videos')
             .getFirstListItem<TVideo>(
-              `show="${currentVideo.show}" && created > "${currentVideo.created}"`,
+              `show="${currentVideo.show}" && show.public=true && created > "${currentVideo.created}"`,
               { sort: 'created' }
             )
             .catch(() => null)
@@ -74,7 +74,7 @@ const getVideosByShow = (showId: string): Promise<TVideo[]> =>
         const pb = await getPb();
 
         const videos = await pb.collection('videos').getFullList<TVideo>({
-          filter: `show="${showId}"`,
+          filter: `show="${showId}" && show.public=true`,
           sort: 'created'
         });
 
@@ -94,6 +94,7 @@ const getAllVideos = async (): Promise<TVideo[]> => {
 
     const videos = await pb.collection('videos').getFullList<TVideo>({
       expand: 'show',
+      filter: 'show.public=true',
       sort: 'created'
     });
 

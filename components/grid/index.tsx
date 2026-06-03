@@ -9,17 +9,20 @@ type TGridProps = {
 
 const Grid = memo(({ videos }: TGridProps) => {
   return (
-    <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
-      {videos.map((video) => (
-        <VideoCard
-          key={video.id}
-          duration={video.duration}
-          thumbnailUrl={getFileUrl(video, video.thumbnail)}
-          title={video.title}
-          href={`/watch/${video.id}`}
-        />
+    <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+      {videos.map((video, index) => (
+        <li key={video.id}>
+          <VideoCard
+            duration={video.duration}
+            episodeNumber={video.index}
+            thumbnailUrl={getFileUrl(video, video.thumbnail)}
+            title={video.title}
+            href={`/watch/${video.id}`}
+            priority={index === 0}
+          />
+        </li>
       ))}
-    </div>
+    </ul>
   );
 });
 Grid.displayName = 'Grid';

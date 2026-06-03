@@ -1,6 +1,7 @@
 import { Footer } from '@/components/footer';
 import { Topbar } from '@/components/top-bar';
-import { fontSans } from '@/config/fonts';
+import { fontBody, fontDisplay } from '@/config/fonts';
+import { getSiteUrl, siteConfig } from '@/config/site';
 import '@/globals.css';
 import clsx from 'clsx';
 import { Metadata, Viewport } from 'next';
@@ -8,18 +9,54 @@ import { unstable_ViewTransition as ViewTransition } from 'react';
 import { Providers } from './providers';
 
 export const metadata: Metadata = {
-  title: 'Gato Fedorento',
-  description: 'Site não oficial dos Gato Fedorento',
+  metadataBase: new URL(getSiteUrl()),
+  applicationName: siteConfig.name,
+  title: {
+    default: siteConfig.title,
+    template: '%s | Os Gatos'
+  },
+  description: siteConfig.description,
+  alternates: {
+    canonical: '/'
+  },
+  openGraph: {
+    type: 'website',
+    locale: siteConfig.locale,
+    siteName: siteConfig.name,
+    title: siteConfig.title,
+    description: siteConfig.description,
+    url: getSiteUrl(),
+    images: [
+      {
+        url: siteConfig.defaultOgImage,
+        width: 1200,
+        height: 630,
+        alt: 'Os Gatos'
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: [
+      {
+        url: siteConfig.defaultOgImage,
+        alt: 'Os Gatos'
+      }
+    ]
+  },
+  robots: {
+    index: true,
+    follow: true
+  },
   icons: {
     icon: '/favicon.ico'
   }
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: 'black' }
-  ]
+  themeColor: '#080808'
 };
 
 const enableAnalytics =
@@ -32,7 +69,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html suppressHydrationWarning lang="en">
+    <html suppressHydrationWarning lang="pt-PT">
       <head>
         {enableAnalytics && (
           <script
@@ -46,13 +83,14 @@ export default function RootLayout({
         <body
           className={clsx(
             'text-foreground bg-background min-h-screen font-sans antialiased',
-            fontSans.variable
+            fontBody.variable,
+            fontDisplay.variable
           )}
         >
           <Providers themeProps={{ attribute: 'class', defaultTheme: 'dark' }}>
-            <div className="relative flex h-dvh flex-col">
+            <div className="relative isolate flex min-h-dvh flex-col overflow-x-clip">
               <Topbar />
-              <main className="container mx-auto mt-6 max-w-7xl flex-grow px-4 lg:px-8">
+              <main className="pb-section lg:pb-section-lg mx-auto flex w-full max-w-[100rem] flex-1 px-4 pt-8 md:px-6 lg:px-8 lg:pt-10">
                 {children}
               </main>
               <Footer />

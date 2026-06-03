@@ -105,7 +105,7 @@ export default function HelpTranscriptionsPage() {
         <h2 className="text-2xl">Links úteis</h2>
         <div className="flex flex-wrap gap-2 text-sm">
           <Link
-            href="https://github.com/diogomartino/osgatos/tree/main/scripts/transcripts"
+            href="https://github.com/diogomartino/osgatos/tree/development/scripts/transcripts"
             target="_blank"
             rel="noreferrer"
             className="bg-content2 hover:text-primary rounded-full border border-white/8 px-4 py-2"

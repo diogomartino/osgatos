@@ -177,7 +177,7 @@ export default async function Page({ params }: TPageProps) {
               {transcriptText ? (
                 <TranscriptDialog
                   transcript={transcriptText}
-                  transcriptFileUrl={`https://github.com/diogomartino/osgatos/blob/main/scripts/transcripts/${video.id}.txt`}
+                  transcriptFileUrl={`https://github.com/diogomartino/osgatos/blob/development/scripts/transcripts/${video.id}.txt`}
                   source={transcriptSource}
                 />
               ) : null}

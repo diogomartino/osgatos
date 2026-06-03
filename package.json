@@ -10,7 +10,9 @@
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "check-types": "tsc --noEmit",
     "format": "prettier --write \"**/*.ts*\" --config ./.prettierrc.json",
-    "magic": "pnpm run lint:fix && pnpm run format && pnpm run check-types"
+    "magic": "pnpm run lint:fix && pnpm run format && pnpm run check-types",
+    "download-transcripts": "bun --conditions react-server ./scripts/download-transcripts.ts",
+    "sync-transcripts": "bun --conditions react-server ./scripts/sync-transcripts.ts"
   },
   "dependencies": {
     "@heroui/button": "2.2.24",

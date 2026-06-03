@@ -47,6 +47,8 @@ export async function generateMetadata({
       images: [
         {
           url: posterUrl,
+          width: 800,
+          height: 1200,
           alt: `Capa da série ${show.title}`
         }
       ]
@@ -55,7 +57,12 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title,
       description,
-      images: [posterUrl]
+      images: [
+        {
+          url: posterUrl,
+          alt: `Capa da série ${show.title}`
+        }
+      ]
     },
     robots: {
       index: true,
@@ -110,7 +117,8 @@ export default async function Page({ params }: TPageProps) {
                 sizes="288px"
                 className="object-cover"
                 priority
-                quality={60}
+                fetchPriority="high"
+                quality={50}
               />
             </div>
 

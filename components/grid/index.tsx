@@ -9,7 +9,7 @@ type TGridProps = {
 
 const Grid = memo(({ videos }: TGridProps) => {
   return (
-    <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
       {videos.map((video, index) => (
         <li key={video.id}>
           <VideoCard
@@ -18,7 +18,7 @@ const Grid = memo(({ videos }: TGridProps) => {
             thumbnailUrl={getFileUrl(video, video.thumbnail)}
             title={video.title}
             href={`/watch/${video.id}`}
-            priority={index < 4}
+            priority={index === 0}
           />
         </li>
       ))}

@@ -11,7 +11,7 @@ const nextConfig = {
         hostname: '**'
       }
     ],
-    qualities: [40, 60, 100]
+    qualities: [40, 50, 60, 100]
   },
   experimental: {
     viewTransition: true

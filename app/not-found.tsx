@@ -10,7 +10,14 @@ export default function NotFound() {
         <span className="text-7xl md:text-8xl">404</span>
         <h1 className="text-2xl md:text-3xl">Essa página não existe.</h1>
       </div>
-      <Image src={notFoundGif} alt="" width={300} height={300} />
+      <Image
+        src={notFoundGif}
+        alt=""
+        width={300}
+        height={300}
+        priority
+        fetchPriority="high"
+      />
       <Link href="/">
         <Button size="sm" radius="full">
           Voltar para a página inicial

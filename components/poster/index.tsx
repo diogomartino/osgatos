@@ -25,10 +25,10 @@ const Poster = memo(({ title, imageUrl, href, priority }: TPosterProps) => {
             alt={`Capa da série ${title}`}
             fill
             className="object-cover object-center"
-            sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 20vw"
+            sizes="(max-width: 767px) calc((100vw - 2.75rem) / 2), (max-width: 1023px) calc((100vw - 4.5rem) / 3), (max-width: 1279px) calc((100vw - 7rem) / 4), (max-width: 1599px) calc((100vw - 8rem) / 5), 294px"
             priority={priority}
-            fetchPriority="high"
-            quality={60}
+            fetchPriority={priority ? 'high' : undefined}
+            quality={50}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent opacity-90" />
           <div className="absolute inset-x-0 bottom-0 z-20 p-3 md:p-4">

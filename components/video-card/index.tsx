@@ -25,10 +25,11 @@ const VideoCard = memo(
             src={thumbnailUrl}
             alt={`Miniatura do sketch ${title}`}
             fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            sizes="(max-width: 767px) calc((100vw - 2.75rem) / 2), (max-width: 1023px) calc((100vw - 4.5rem) / 3), (max-width: 1599px) calc((100vw - 26.75rem) / 4), 307px"
             className="object-cover object-center"
-            quality={60}
+            quality={50}
             priority={priority}
+            fetchPriority={priority ? 'high' : undefined}
           />
           <div className="absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t from-black/75 to-transparent" />
           <div className="absolute right-2 bottom-2 z-20">

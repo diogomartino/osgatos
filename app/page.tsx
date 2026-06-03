@@ -48,7 +48,12 @@ export async function generateMetadata(): Promise<Metadata> {
       card: 'summary_large_image',
       title,
       description,
-      images: [siteConfig.defaultOgImage]
+      images: [
+        {
+          url: siteConfig.defaultOgImage,
+          alt: 'Cartaz editorial da biblioteca Os Gatos'
+        }
+      ]
     },
     robots: {
       index: true,
@@ -87,7 +92,7 @@ export default async function Home() {
               href={`/show/${show.slug}`}
               imageUrl={getFileUrl(show, show.cover)}
               title={show.title}
-              priority={index < 6}
+              priority={index === 0}
             />
           </li>
         ))}

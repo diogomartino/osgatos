@@ -15,8 +15,9 @@ const Topbar = memo(() => {
             href="/"
             data-interactive="true"
           >
-            <span className="font-display text-foreground truncate text-[1.6rem] font-extrabold tracking-[-0.08em] uppercase md:text-[2.15rem] md:leading-none">
-              Os <span className="text-primary">Gatos</span>
+            <span className="font-display text-foreground truncate text-3xl font-extrabold">
+              OS<span className="text-primary">GATOS</span>
+              <span className="text-sm">.NET</span>
             </span>
           </Link>
         </div>

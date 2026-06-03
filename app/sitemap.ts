@@ -1,6 +1,7 @@
-import { getSiteUrl } from '@/config/site';
+import { getSiteUrl, siteConfig } from '@/config/site';
 import { getFileUrl } from '@/helpers/get-file-url';
 import { getVideoMetadataDescription } from '@/helpers/get-video-metadata-description';
+import { getYoutubeId } from '@/helpers/get-youtube-id';
 import { getShows } from '@/queries/shows';
 import { getAllVideos } from '@/queries/videos';
 import type { MetadataRoute } from 'next';
@@ -11,7 +12,10 @@ const getVideosMapping = async (): Promise<MetadataRoute.Sitemap> => {
   const videos = await getAllVideos();
 
   return videos.map((video) => {
-    const youtubeId = video.videoUrl.split('/').pop();
+    const youtubeId = getYoutubeId(video.videoUrl);
+    const playerLoc = youtubeId
+      ? `https://www.youtube.com/embed/${youtubeId}`
+      : video.videoUrl;
 
     return {
       url: `${siteUrl}/watch/${video.id}`,
@@ -24,9 +28,10 @@ const getVideosMapping = async (): Promise<MetadataRoute.Sitemap> => {
           description: getVideoMetadataDescription({
             title: video.title
           }),
-          thumbnail_loc: getFileUrl(video, video.thumbnail),
+          thumbnail_loc:
+            getFileUrl(video, video.thumbnail) || siteConfig.defaultOgImage,
           embed_loc: `${siteUrl}/watch/${video.id}`,
-          player_loc: `https://www.youtube.com/embed/${youtubeId}`,
+          player_loc: playerLoc,
           publication_date: new Date(video.created).toISOString()
         }
       ]

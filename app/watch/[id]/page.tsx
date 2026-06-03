@@ -1,9 +1,11 @@
 import { Info } from '@/components/info';
 import { VideoJsonLd } from '@/components/json-ld/video';
+import { TranscriptDialog } from '@/components/transcript-dialog';
 import { VideoPlayer } from '@/components/video-player';
 import { getSiteUrl, siteConfig } from '@/config/site';
 import { getFileUrl } from '@/helpers/get-file-url';
 import { getVideoMetadataDescription } from '@/helpers/get-video-metadata-description';
+import { getYoutubeId } from '@/helpers/get-youtube-id';
 import { getShowByVideoId } from '@/queries/shows';
 import { getPreviousAndNextVideoById, getVideoById } from '@/queries/videos';
 import { ArrowBigLeftDash, ArrowBigRightDash } from 'lucide-react';
@@ -13,6 +15,14 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
 export const revalidate = 604800; // 1 week
+
+const getTranscriptText = (transcript: string | null | undefined) => {
+  const text = transcript?.replace(/\r\n/g, '\n').trim();
+
+  if (!text) return '';
+
+  return text;
+};
 
 type TGenerateMetadataProps = {
   params: Promise<{ id: string }>;
@@ -31,7 +41,10 @@ export async function generateMetadata({
     return {};
   }
 
-  const youtubeId = video.videoUrl.split('/').pop();
+  const youtubeId = getYoutubeId(video.videoUrl);
+  const embedUrl = youtubeId
+    ? `https://www.youtube.com/embed/${youtubeId}`
+    : undefined;
   const description = getVideoMetadataDescription({
     title: video.title,
     showTitle: show?.title
@@ -56,23 +69,33 @@ export async function generateMetadata({
       images: [
         {
           url: thumbnail,
+          width: 1200,
+          height: 675,
           alt: `Miniatura do sketch ${video.title}`
         }
       ],
-      videos: [
-        {
-          url: `https://www.youtube.com/embed/${youtubeId}`,
-          type: 'application/x-shockwave-flash',
-          width: 1280,
-          height: 720
-        }
-      ]
+      ...(embedUrl && {
+        videos: [
+          {
+            url: embedUrl,
+            secureUrl: embedUrl,
+            type: 'text/html',
+            width: 1280,
+            height: 720
+          }
+        ]
+      })
     },
     twitter: {
       card: 'summary_large_image',
       title: video.title,
       description,
-      images: [thumbnail]
+      images: [
+        {
+          url: thumbnail,
+          alt: `Miniatura do sketch ${video.title}`
+        }
+      ]
     },
     robots: {
       index: true,
@@ -102,6 +125,23 @@ export default async function Page({ params }: TPageProps) {
     title: video.title,
     showTitle: show?.title
   });
+
+  const transcriptSource = video.transcriptFinal?.trim()
+    ? 'transcriptFinal'
+    : video.transcriptv2?.trim()
+      ? 'transcriptv2'
+      : 'transcript';
+
+  const transcriptText = getTranscriptText(
+    transcriptSource === 'transcriptFinal'
+      ? video.transcriptFinal
+      : transcriptSource === 'transcriptv2'
+        ? video.transcriptv2
+        : video.transcript
+  );
+
+  const thumbnail =
+    getFileUrl(video, video.thumbnail) || siteConfig.defaultOgImage;
 
   return (
     <>
@@ -134,7 +174,20 @@ export default async function Page({ params }: TPageProps) {
                 duration={video.duration ?? 0}
                 labelHref={show ? `/show/${show.slug}` : undefined}
               />
+              {transcriptText ? (
+                <TranscriptDialog
+                  title={video.title}
+                  transcript={transcriptText}
+                  transcriptFileUrl={`https://github.com/diogomartino/osgatos/blob/main/scripts/transcripts/${video.id}.txt`}
+                  source={transcriptSource}
+                />
+              ) : null}
             </div>
+            {!transcriptText ? (
+              <p className="text-default-500 max-w-3xl text-sm">
+                {description}
+              </p>
+            ) : null}
           </article>
 
           <nav
@@ -185,7 +238,7 @@ export default async function Page({ params }: TPageProps) {
       <VideoJsonLd
         title={`Gato Fedorento - ${video.title}`}
         description={description}
-        thumbnailUrl={getFileUrl(video, video.thumbnail)}
+        thumbnailUrl={thumbnail}
         uploadDate={new Date(video.created).toISOString()}
         duration={video.duration}
         youtubeUrl={video.videoUrl}

@@ -9,7 +9,15 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { MenuItem } from './menu-item';
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = async (url: string) => {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error('Search request failed');
+  }
+
+  return response.json();
+};
 
 const SearchBar = memo(() => {
   const [search, setSearch] = useState('');
@@ -42,10 +50,11 @@ const SearchBar = memo(() => {
 
   const onItemClick = useCallback(() => {
     setSearch('');
+    setDebouncedSearch('');
     setIsOpen(false);
   }, []);
 
-  const { data, isLoading } = useSWR<TVideo[]>(
+  const { data, error, isLoading, mutate } = useSWR<TVideo[]>(
     debouncedSearch
       ? `/api/search?q=${encodeURIComponent(debouncedSearch)}`
       : null,
@@ -64,6 +73,7 @@ const SearchBar = memo(() => {
       }
     }
   );
+  const results = useMemo(() => data ?? [], [data]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -120,7 +130,7 @@ const SearchBar = memo(() => {
         <div className="bg-content1 shadow-lift absolute top-full right-0 z-50 mt-2 w-full overflow-hidden rounded-md border border-white/8">
           <div className="text-default-500 border-divider flex items-center justify-between border-b px-3 py-2 text-[0.64rem] font-semibold tracking-[0.22em] uppercase">
             <span>Resultados</span>
-            {data && data.length > 0 ? <span>{data.length}</span> : null}
+            {results.length > 0 ? <span>{results.length}</span> : null}
           </div>
           <div className="max-h-[70vh] overflow-y-auto p-2 lg:max-h-[32rem]">
             {isLoading && (
@@ -129,15 +139,28 @@ const SearchBar = memo(() => {
               </div>
             )}
 
-            {!isLoading && data?.length === 0 && (
+            {!isLoading && error && (
+              <div className="text-default-500 flex flex-col items-center gap-3 p-4 text-center text-sm">
+                <span>Não foi possível carregar resultados.</span>
+                <button
+                  type="button"
+                  onClick={() => mutate()}
+                  className="text-primary hover:text-primary-400 rounded-sm text-xs font-semibold tracking-[0.18em] uppercase"
+                >
+                  Tentar novamente
+                </button>
+              </div>
+            )}
+
+            {!isLoading && !error && data?.length === 0 && (
               <div className="text-default-500 p-4 text-center text-sm">
                 Sem resultados.
               </div>
             )}
 
-            {!isLoading && data && data.length > 0 && (
+            {!isLoading && !error && results.length > 0 && (
               <div className="flex flex-col gap-1">
-                {data.map((item) => (
+                {results.map((item) => (
                   <MenuItem item={item} key={item.id} onClick={onItemClick} />
                 ))}
               </div>

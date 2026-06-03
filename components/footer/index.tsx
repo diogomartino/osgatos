@@ -11,6 +11,15 @@ const Footer = () => {
         </p>
 
         <div className="text-default-500 flex flex-wrap items-center gap-1 text-xs">
+          <Link href="/about" className="hover:text-foreground px-2 py-1">
+            Sobre
+          </Link>
+          <Link
+            href="/help-transcriptions"
+            className="hover:text-foreground px-2 py-1"
+          >
+            Transcrições
+          </Link>
           <Link
             href="https://www.reddit.com/r/gatofedorento"
             target="_blank"

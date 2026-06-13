@@ -19,6 +19,7 @@ const Grid = memo(({ videos }: TGridProps) => {
             title={video.title}
             href={`/watch/${video.id}`}
             priority={index === 0}
+            hasFinalTranscript={Boolean(video.transcriptFinal?.trim())}
           />
         </li>
       ))}

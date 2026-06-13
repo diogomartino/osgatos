@@ -1,4 +1,3 @@
-import { Info } from '@/components/info';
 import { VideoJsonLd } from '@/components/json-ld/video';
 import { TranscriptDialog } from '@/components/transcript-dialog';
 import { VideoPlayer } from '@/components/video-player';
@@ -142,6 +141,7 @@ export default async function Page({ params }: TPageProps) {
 
   const thumbnail =
     getFileUrl(video, video.thumbnail) || siteConfig.defaultOgImage;
+  const durationLabel = `${Math.max(1, Math.floor((video.duration ?? 0) / 60))} min`;
 
   return (
     <>
@@ -168,16 +168,27 @@ export default async function Page({ params }: TPageProps) {
             <h1 className="line-clamp-2 max-w-4xl text-2xl leading-[0.97] md:text-3xl lg:text-[2.5rem]">
               {video.title}
             </h1>
-            <div className="text-default-500 flex flex-wrap items-center gap-3 text-sm">
-              <Info
-                label={show ? show.title : 'Sketch'}
-                duration={video.duration ?? 0}
-                labelHref={show ? `/show/${show.slug}` : undefined}
-              />
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              {show ? (
+                <Link
+                  href={`/show/${show.slug}`}
+                  className="bg-content1 text-foreground/85 hover:border-primary/50 hover:text-primary inline-flex h-8 items-center rounded-full border border-white/8 px-3 text-xs font-medium"
+                  data-interactive="true"
+                >
+                  {show.title}
+                </Link>
+              ) : (
+                <span className="bg-content1 text-foreground/85 inline-flex h-8 items-center rounded-full border border-white/8 px-3 text-xs font-medium">
+                  Sketch
+                </span>
+              )}
+              <span className="bg-content1 text-default-500 inline-flex h-8 items-center rounded-full border border-white/8 px-3 text-xs font-medium">
+                {durationLabel}
+              </span>
               {transcriptText ? (
                 <TranscriptDialog
                   transcript={transcriptText}
-                  transcriptFileUrl={`https://github.com/diogomartino/osgatos/blob/main/scripts/transcripts/${video.id}.txt`}
+                  transcriptFileUrl={`https://github.com/diogomartino/osgatos/blob/development/scripts/transcripts/${video.id}.txt`}
                   source={transcriptSource}
                 />
               ) : null}

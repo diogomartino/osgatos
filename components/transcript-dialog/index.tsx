@@ -25,13 +25,17 @@ const TranscriptDialog = ({
   const sourceLabel = source === 'transcriptv2' ? 'v2' : 'v1';
 
   return (
-    <div className="text-sm">
+    <div className="relative inline-flex text-sm">
       <Button
         isIconOnly
         aria-label="Ver transcrição"
         size="sm"
         variant="light"
-        className="text-default-500 hover:text-foreground h-7 w-7 min-w-0 rounded-full"
+        className={
+          source === 'transcriptFinal'
+            ? 'h-8 w-8 min-w-0 rounded-full border border-green-500/35 bg-green-500/15 text-green-300 hover:border-green-400/60 hover:bg-green-500/25 hover:text-green-200'
+            : 'bg-content1 text-default-500 hover:border-primary/50 hover:text-foreground h-8 w-8 min-w-0 rounded-full border border-white/8'
+        }
         onPress={onOpen}
       >
         <Captions size="1rem" />

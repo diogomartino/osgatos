@@ -9,10 +9,18 @@ type TVideoCardProps = {
   href?: string;
   episodeNumber?: number;
   priority?: boolean;
+  hasFinalTranscript?: boolean;
 };
 
 const VideoCard = memo(
-  ({ title, duration, thumbnailUrl, href, priority }: TVideoCardProps) => {
+  ({
+    title,
+    duration,
+    thumbnailUrl,
+    href,
+    priority,
+    hasFinalTranscript
+  }: TVideoCardProps) => {
     const minutes = Math.floor(duration / 60);
     const seconds = duration % 60;
     const formattedDuration = `${minutes}:${seconds.toString().padStart(2, '0')}`;
@@ -31,6 +39,12 @@ const VideoCard = memo(
             priority={priority}
             fetchPriority={priority ? 'high' : undefined}
           />
+          {hasFinalTranscript ? (
+            <span
+              aria-hidden="true"
+              className="absolute top-0 right-0 z-20 h-4 w-4 bg-green-400 opacity-45 transition-opacity duration-200 [clip-path:polygon(100%_0,0_0,100%_100%)] group-hover:opacity-100"
+            />
+          ) : null}
           <div className="absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t from-black/75 to-transparent" />
           <div className="absolute right-2 bottom-2 z-20">
             <span className="rounded-full bg-black/75 px-2.5 py-1 text-[0.62rem] font-semibold tracking-[0.14em] text-white uppercase">

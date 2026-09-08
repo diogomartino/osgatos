@@ -35,4 +35,19 @@ type TShow = {
   public: boolean;
 };
 
-export type { TShow, TVideo };
+type TVideoListItem = Omit<
+  TVideo,
+  'transcript' | 'transcriptv2' | 'transcriptv2Segments' | 'srt'
+>;
+
+type TVideoCard = Pick<
+  TVideo,
+  'id' | 'collectionId' | 'title' | 'thumbnail' | 'duration'
+> & {
+  transcriptFinal?: string | null;
+  hasFinalTranscript?: boolean;
+  snippet?: string | null;
+  showTitle?: string | null;
+};
+
+export type { TShow, TVideo, TVideoCard, TVideoListItem };

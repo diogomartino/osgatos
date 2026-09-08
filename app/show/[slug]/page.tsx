@@ -1,193 +1,148 @@
-import { Grid } from '@/components/grid';
-import { Info } from '@/components/info';
+import { BreadcrumbsJsonLd } from '@/components/json-ld/breadcrumbs';
 import { ShowJsonLd } from '@/components/json-ld/show';
-import { getSiteUrl, siteConfig } from '@/config/site';
+import { ShowBrowser } from '@/components/show-browser';
+import { getSiteUrl } from '@/config/site';
+import { formatMinutes } from '@/helpers/format-duration';
 import { getFileUrl } from '@/helpers/get-file-url';
+import { buildMetadata } from '@/helpers/metadata';
+import { dailySeed, shuffle } from '@/helpers/shuffle';
+import { toVideoCard } from '@/helpers/to-video-card';
 import { getShowBySlug } from '@/queries/shows';
 import { getVideosByShow } from '@/queries/videos';
-import { TVideo } from '@/types/db';
+import { Play, Shuffle } from 'lucide-react';
 import { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 export const revalidate = 604800; // 1 week
-
-type TGenerateMetadataProps = {
-  params: Promise<{ slug: string }>;
-};
-
-export async function generateMetadata({
-  params
-}: TGenerateMetadataProps): Promise<Metadata> {
-  const { slug } = await params;
-  const show = await getShowBySlug(slug);
-
-  if (!show) {
-    return {};
-  }
-
-  const title = `Gato Fedorento - Série ${show.title}`;
-  const description = `Arquivo editorial da série ${show.title}, com sketches completos e especiais do Gato Fedorento.`;
-  const posterUrl = getFileUrl(show, show.cover) || siteConfig.defaultOgImage;
-
-  return {
-    title,
-    description,
-    metadataBase: new URL(getSiteUrl()),
-    alternates: {
-      canonical: `/show/${show.slug}`
-    },
-    openGraph: {
-      type: 'website',
-      title,
-      description,
-      url: `/show/${show.slug}`,
-      siteName: siteConfig.name,
-      locale: siteConfig.locale,
-      images: [
-        {
-          url: posterUrl,
-          width: 800,
-          height: 1200,
-          alt: `Capa da série ${show.title}`
-        }
-      ]
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: [
-        {
-          url: posterUrl,
-          alt: `Capa da série ${show.title}`
-        }
-      ]
-    },
-    robots: {
-      index: true,
-      follow: true
-    }
-  };
-}
 
 type TPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export default async function Page({ params }: TPageProps) {
+export async function generateMetadata({
+  params
+}: TPageProps): Promise<Metadata> {
   const { slug } = await params;
-
   const show = await getShowBySlug(slug);
 
-  if (!show) {
-    notFound();
-  }
+  if (!show) return {};
 
-  const videos = await getVideosByShow(show?.id);
-  const { normalVideos, specialVideos } = videos.reduce<{
-    normalVideos: TVideo[];
-    specialVideos: TVideo[];
-  }>(
-    (acc, video) => {
-      if (video.isSpecial) {
-        acc.specialVideos.push(video);
-      } else {
-        acc.normalVideos.push(video);
-      }
-      return acc;
-    },
-    { normalVideos: [], specialVideos: [] }
-  );
+  return buildMetadata({
+    title: `Gato Fedorento - Série ${show.title}`,
+    description: `Arquivo completo da série ${show.title}, com sketches e especiais do Gato Fedorento.`,
+    path: `/show/${show.slug}`,
+    image: getFileUrl(show, show.cover),
+    imageAlt: `Capa da série ${show.title}`,
+    imageSize: { width: 800, height: 1200 }
+  });
+}
 
-  const durationCount = videos.reduce((acc, v) => acc + (v.duration ?? 0), 0);
-  const showDescription = `Arquivo completo da série ${show.title}, com ${videos.length} sketches${specialVideos.length > 0 ? ` e ${specialVideos.length} especiais` : ''}.`;
+export default async function Page({ params }: TPageProps) {
+  const { slug } = await params;
+  const show = await getShowBySlug(slug);
+
+  if (!show) notFound();
+
+  const videos = await getVideosByShow(show.id);
+  const toCards = (isSpecial: boolean) =>
+    videos
+      .filter((video) => Boolean(video.isSpecial) === isSpecial)
+      .map((video) => toVideoCard(video));
+
+  const sketches = toCards(false);
+  const specials = toCards(true);
+  const first = sketches[0] ?? specials[0];
+
+  const totalDuration = videos.reduce((acc, v) => acc + (v.duration ?? 0), 0);
+  const coverUrl = getFileUrl(show, show.cover);
+  const randomId = shuffle([...sketches, ...specials], dailySeed())[0]?.id;
+  const description = `Arquivo completo da série ${show.title}, com ${videos.length} sketches${specials.length > 0 ? ` e ${specials.length} especiais` : ''}.`;
 
   return (
     <>
-      <div className="mx-auto grid w-full max-w-[100rem] gap-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-10">
-        <aside className="lg:sticky lg:top-28 lg:self-start">
-          <div className="flex flex-col gap-5">
-            <div className="bg-content2 shadow-lift relative mx-auto aspect-[2/3] w-full max-w-[18rem] overflow-hidden rounded-lg lg:mx-0">
-              <div className="pointer-events-none absolute inset-0 z-10 border border-white/8" />
-              <Image
-                src={getFileUrl(show, show.cover)}
-                alt={`Capa da série ${show.title}`}
-                fill
-                sizes="288px"
-                className="object-cover"
-                priority
-                fetchPriority="high"
-                quality={50}
-              />
-            </div>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[26rem] overflow-hidden"
+      >
+        <Image
+          src={coverUrl}
+          alt=""
+          fill
+          sizes="640px"
+          quality={40}
+          className="backdrop-fade scale-110 object-cover object-top opacity-25 blur-3xl"
+        />
+      </div>
 
-            <div className="flex flex-col gap-4">
-              <h1 className="text-3xl leading-[0.95] md:text-4xl lg:text-[3.2rem]">
-                {show.title}
-              </h1>
-              <Info
-                label={`${videos.length} sketches`}
-                duration={durationCount}
-              />
-              {specialVideos.length > 0 ? (
-                <p className="text-default-500 text-sm">
-                  {specialVideos.length} especiais
-                </p>
+      <div className="shell flex flex-col gap-8 lg:gap-10">
+        <header className="flex flex-col gap-6 sm:flex-row sm:items-end sm:gap-8">
+          <div className="bg-content2 shadow-lift relative aspect-[2/3] w-36 shrink-0 overflow-hidden rounded-lg sm:w-44 lg:w-52">
+            <div className="hairline pointer-events-none absolute inset-0 z-10 rounded-lg" />
+            <Image
+              src={coverUrl}
+              alt={`Capa da série ${show.title}`}
+              fill
+              sizes="208px"
+              className="object-cover"
+              priority
+              quality={60}
+            />
+          </div>
+
+          <div className="flex min-w-0 flex-col gap-3">
+            <span className="eyebrow text-primary">Série · {show.year}</span>
+
+            <h1 className="text-3xl leading-[0.95] md:text-5xl lg:text-[3.6rem]">
+              {show.title}
+            </h1>
+
+            <div className="text-default-500 flex flex-wrap items-center gap-2 text-sm">
+              <span>{videos.length} sketches</span>
+              <span className="bg-primary h-1 w-1 rounded-full" />
+              <span>{formatMinutes(totalDuration)}</span>
+              {specials.length > 0 ? (
+                <>
+                  <span className="bg-primary h-1 w-1 rounded-full" />
+                  <span>{specials.length} especiais</span>
+                </>
               ) : null}
             </div>
-          </div>
-        </aside>
 
-        <div className="flex min-w-0 flex-col gap-10">
-          <section
-            aria-labelledby="videos-heading"
-            className="flex flex-col gap-5"
-          >
-            <h2
-              id="videos-heading"
-              className="border-primary text-foreground border-l-2 pl-3 text-sm font-semibold tracking-[0.24em] uppercase"
-            >
-              Sketches
-            </h2>
-
-            {normalVideos.length > 0 ? (
-              <Grid videos={normalVideos} />
-            ) : (
-              <div
-                className="bg-content1 shadow-frame flex min-h-56 flex-col justify-center rounded-lg px-6 py-10 text-center"
-                data-shell-frame="true"
-              >
-                <h3 className="text-xl">
-                  Ainda não existem sketches nesta série.
-                </h3>
+            {first ? (
+              <div className="mt-1 flex flex-wrap items-center gap-2">
+                <Link
+                  href={`/watch/${first.id}`}
+                  className="bg-foreground text-background inline-flex h-11 items-center gap-2 rounded-full px-6 text-sm font-semibold hover:opacity-90"
+                >
+                  <Play size="1rem" fill="currentColor" />
+                  Reproduzir
+                </Link>
+                <Link
+                  href={`/watch/${randomId}`}
+                  className="hairline bg-content1 text-foreground hover:border-primary/50 hover:text-primary inline-flex h-11 items-center gap-2 rounded-full px-6 text-sm font-semibold"
+                >
+                  <Shuffle size="1rem" />
+                  Ao calhas
+                </Link>
               </div>
-            )}
-          </section>
+            ) : null}
+          </div>
+        </header>
 
-          {specialVideos.length > 0 && (
-            <section
-              aria-labelledby="specials-heading"
-              className="flex flex-col gap-5"
-            >
-              <h2
-                id="specials-heading"
-                className="border-primary text-foreground border-l-2 pl-3 text-sm font-semibold tracking-[0.24em] uppercase"
-              >
-                Especiais
-              </h2>
-
-              <Grid videos={specialVideos} />
-            </section>
-          )}
-        </div>
+        <ShowBrowser sketches={sketches} specials={specials} />
       </div>
+
+      <BreadcrumbsJsonLd
+        trail={[{ name: show.title, path: `/show/${show.slug}` }]}
+      />
 
       <ShowJsonLd
         title={show.title}
-        description={showDescription}
+        description={description}
         url={`${getSiteUrl()}/show/${show.slug}`}
-        image={getFileUrl(show, show.cover)}
+        image={coverUrl}
         datePublished={new Date(show.created).toISOString()}
         dateModified={new Date(show.updated).toISOString()}
         episodes={videos.map((video, index) => ({

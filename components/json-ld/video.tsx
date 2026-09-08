@@ -1,4 +1,5 @@
 import { getYoutubeId } from '@/helpers/get-youtube-id';
+import { JsonLd } from './index';
 
 type TVideoJsonLdProps = {
   title: string;
@@ -7,6 +8,9 @@ type TVideoJsonLdProps = {
   uploadDate: string;
   duration?: number; // seconds
   youtubeUrl: string;
+  url: string;
+  transcript?: string;
+  series?: { name: string; url: string };
 };
 
 const VideoJsonLd = ({
@@ -15,7 +19,10 @@ const VideoJsonLd = ({
   thumbnailUrl,
   uploadDate,
   duration,
-  youtubeUrl
+  youtubeUrl,
+  url,
+  transcript,
+  series
 }: TVideoJsonLdProps) => {
   const isoDuration = duration
     ? `PT${Math.floor(Number(duration) / 60)}M${Number(duration) % 60}S`
@@ -25,22 +32,31 @@ const VideoJsonLd = ({
     ? `https://www.youtube.com/embed/${youtubeId}`
     : undefined;
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'VideoObject',
-    name: title,
-    description,
-    thumbnailUrl: Array.isArray(thumbnailUrl) ? thumbnailUrl : [thumbnailUrl],
-    uploadDate,
-    ...(embedUrl && { embedUrl }),
-    contentUrl: youtubeUrl,
-    ...(isoDuration && { duration: isoDuration })
-  };
-
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    <JsonLd
+      data={{
+        '@context': 'https://schema.org',
+        '@type': 'VideoObject',
+        name: title,
+        description,
+        url,
+        inLanguage: 'pt-PT',
+        thumbnailUrl: Array.isArray(thumbnailUrl)
+          ? thumbnailUrl
+          : [thumbnailUrl],
+        uploadDate,
+        ...(embedUrl && { embedUrl }),
+        contentUrl: youtubeUrl,
+        ...(isoDuration && { duration: isoDuration }),
+        ...(transcript && { transcript }),
+        ...(series && {
+          partOfSeries: {
+            '@type': 'TVSeries',
+            name: series.name,
+            url: series.url
+          }
+        })
+      }}
     />
   );
 };

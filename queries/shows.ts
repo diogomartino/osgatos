@@ -1,6 +1,7 @@
 import { getPb } from '@/helpers/pb';
+import { getVideosByShow } from '@/queries/videos';
 import { CacheKey, REVALIDATE_TIME } from '@/statics';
-import { TShow } from '@/types/db';
+import { TShow, TVideoListItem } from '@/types/db';
 import { unstable_cache } from 'next/cache';
 import 'server-only';
 
@@ -71,4 +72,17 @@ const getShowByVideoId = async (videoId: string): Promise<TShow | undefined> =>
     }
   )();
 
-export { getShowBySlug, getShowByVideoId, getShows };
+const getShowsWithVideos = async (): Promise<
+  { show: TShow; videos: TVideoListItem[] }[]
+> => {
+  const shows = await getShows();
+
+  return Promise.all(
+    shows.map(async (show) => ({
+      show,
+      videos: await getVideosByShow(show.id)
+    }))
+  );
+};
+
+export { getShowBySlug, getShowByVideoId, getShows, getShowsWithVideos };

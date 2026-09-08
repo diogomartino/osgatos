@@ -1,3 +1,4 @@
+import { clearSearchIndex } from '@/queries/search';
 import { CacheKey } from '@/statics';
 import { revalidatePath, revalidateTag } from 'next/cache';
 
@@ -12,6 +13,9 @@ export async function GET(request: Request) {
       revalidateTag(tag);
     });
 
+    clearSearchIndex();
+
+    revalidatePath('/', 'page');
     revalidatePath('/watch/[id]', 'page');
     revalidatePath('/show/[slug]', 'page');
 

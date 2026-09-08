@@ -14,7 +14,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 text-center">
+    <div className="shell flex min-h-[50vh] flex-col items-center justify-center gap-4 text-center">
       <h2 className="text-2xl md:text-3xl">Algo correu mal.</h2>
       <button
         onClick={() => reset()}

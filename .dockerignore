@@ -1,1 +1,14 @@
+node_modules
+.next
+.next-docs
+.git
+.gitignore
 .env*
+.vscode
+.claude
+Dockerfile
+.dockerignore
+README.md
+LICENSE
+npm-debug.log*
+*.tsbuildinfo

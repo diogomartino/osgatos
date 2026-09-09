@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: process.env.BUILD_STANDALONE ? 'standalone' : undefined,
   images: {
     remotePatterns: [
       {

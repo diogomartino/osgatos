@@ -1,6 +1,6 @@
 'use client';
 
-import type { TUmamiWindow } from '@/types';
+import { track } from '@/helpers/track';
 import type { TVideoCard } from '@/types/db';
 import { Command } from 'cmdk';
 import { Search } from 'lucide-react';
@@ -74,10 +74,8 @@ const CommandPalette = () => {
     fetcher,
     {
       keepPreviousData: true,
-      onSuccess() {
-        (window as TUmamiWindow).umami?.track('search', {
-          query: debouncedQuery
-        });
+      onSuccess(results) {
+        track('search', { query: debouncedQuery, results: results.length });
       }
     }
   );
@@ -149,6 +147,11 @@ const CommandPalette = () => {
                   ) {
                     event.preventDefault();
                     event.stopPropagation();
+                    track('search-see-all', {
+                      query: query.trim(),
+                      results: results.length,
+                      via: 'enter'
+                    });
                     go(`/search?q=${encodeURIComponent(query.trim())}`);
                   }
                 }}
@@ -182,11 +185,20 @@ const CommandPalette = () => {
                 </Command.Empty>
               ) : null}
 
-              {results.map((video) => (
+              {results.map((video, index) => (
                 <Command.Item
                   key={video.id}
                   value={video.id}
-                  onSelect={() => go(`/watch/${video.id}`)}
+                  onSelect={() => {
+                    track('search-select', {
+                      query,
+                      videoId: video.id,
+                      position: index + 1,
+                      // Whether the transcript, rather than the title, matched.
+                      viaTranscript: Boolean(video.snippet)
+                    });
+                    go(`/watch/${video.id}`);
+                  }}
                   className="data-[selected=true]:bg-content2 cursor-pointer rounded-md p-2"
                 >
                   <VideoRow video={video} />
@@ -196,7 +208,10 @@ const CommandPalette = () => {
               {results.length > 0 ? (
                 <Command.Item
                   value="__all"
-                  onSelect={() => go(`/search?q=${encodeURIComponent(query)}`)}
+                  onSelect={() => {
+                    track('search-see-all', { query, results: results.length });
+                    go(`/search?q=${encodeURIComponent(query)}`);
+                  }}
                   className="eyebrow text-primary data-[selected=true]:bg-content2 mt-1 cursor-pointer rounded-md px-3 py-3"
                 >
                   Ver todos os resultados

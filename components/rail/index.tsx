@@ -1,5 +1,6 @@
 'use client';
 
+import { track } from '@/helpers/track';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
@@ -82,7 +83,10 @@ const Rail = memo(({ title, href, children }: TRailProps) => {
             <button
               type="button"
               aria-label={`${title}: ver anteriores`}
-              onClick={() => embla?.scrollPrev()}
+              onClick={() => {
+                track('rail-scroll', { rail: title, direction: 'prev' });
+                embla?.scrollPrev();
+              }}
               className={`${arrow} left-0 -translate-x-1/2`}
             >
               <ChevronLeft size="1.2rem" />
@@ -93,7 +97,10 @@ const Rail = memo(({ title, href, children }: TRailProps) => {
             <button
               type="button"
               aria-label={`${title}: ver mais`}
-              onClick={() => embla?.scrollNext()}
+              onClick={() => {
+                track('rail-scroll', { rail: title, direction: 'next' });
+                embla?.scrollNext();
+              }}
               className={`${arrow} right-0 translate-x-1/2`}
             >
               <ChevronRight size="1.2rem" />

@@ -9,7 +9,7 @@ import { getShowsWithVideos } from '@/queries/shows';
 import { TVideoListItem } from '@/types/db';
 import { Metadata } from 'next';
 
-export const revalidate = 604800; // 1 week
+export const revalidate = 3600; // 1 hour
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -38,7 +38,13 @@ const sample = <T,>(items: T[], count: number, offset: number) =>
   shuffle(items, dailySeed() + offset).slice(0, count);
 
 export default async function Home() {
-  const showsWithVideos = await getShowsWithVideos();
+  // Specials are long-form and belong on their series page, not the home rails.
+  const showsWithVideos = (await getShowsWithVideos()).map(
+    ({ show, videos }) => ({
+      show,
+      videos: videos.filter((video) => !video.isSpecial)
+    })
+  );
   const shows = showsWithVideos.map(({ show }) => show);
 
   const allVideos = showsWithVideos.flatMap(({ show, videos }) =>
@@ -63,8 +69,7 @@ export default async function Home() {
       offset
     ).map(({ video, show }) => toVideoCard(video, show));
 
-  const sketches = allVideos.filter(({ video }) => !video.isSpecial);
-  const featured = sample(sketches.length > 0 ? sketches : allVideos, 1, 0)[0];
+  const featured = sample(allVideos, 1, 0)[0];
 
   return (
     <div className="flex w-full flex-col gap-8 lg:gap-10">
@@ -86,13 +91,8 @@ export default async function Home() {
       ))}
 
       <VideoRail
-        title="Especiais"
-        videos={toCards(2, (video) => video.isSpecial)}
-      />
-
-      <VideoRail
         title="Com transcrição revista"
-        videos={toCards(3, (video) => Boolean(video.transcriptFinal?.trim()))}
+        videos={toCards(2, (video) => Boolean(video.transcriptFinal?.trim()))}
       />
     </div>
   );

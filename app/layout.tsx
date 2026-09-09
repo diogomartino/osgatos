@@ -5,7 +5,7 @@ import { siteConfig } from '@/config/site';
 import '@/globals.css';
 import { buildMetadata } from '@/helpers/metadata';
 import { Metadata, Viewport } from 'next';
-import { unstable_ViewTransition as ViewTransition } from 'react';
+import { ViewTransition } from 'react';
 
 export const metadata: Metadata = {
   ...buildMetadata({

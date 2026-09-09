@@ -1,8 +1,9 @@
 'use client';
 
+import { track } from '@/helpers/track';
 import { TVideoCard } from '@/types/db';
 import { Search, X } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Grid } from '../grid';
 
 type TSort = 'default' | 'title' | 'shortest' | 'longest';
@@ -31,11 +32,12 @@ const sorters: Record<
 };
 
 type TShowBrowserProps = {
+  show: string;
   sketches: TVideoCard[];
   specials: TVideoCard[];
 };
 
-const ShowBrowser = ({ sketches, specials }: TShowBrowserProps) => {
+const ShowBrowser = ({ show, sketches, specials }: TShowBrowserProps) => {
   const [tab, setTab] = useState<'sketches' | 'specials'>('sketches');
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<TSort>('default');
@@ -46,6 +48,20 @@ const ShowBrowser = ({ sketches, specials }: TShowBrowserProps) => {
   ].filter(({ videos }) => videos.length > 0);
 
   const active = tabs.find(({ value }) => value === tab) ?? tabs[0];
+
+  // Reported once the typing settles, not per keystroke.
+  useEffect(() => {
+    const needle = query.trim();
+
+    if (!needle) return;
+
+    const timeout = setTimeout(
+      () => track('show-filter', { show, query: needle }),
+      800
+    );
+
+    return () => clearTimeout(timeout);
+  }, [query, show]);
 
   const visible = useMemo(() => {
     if (!active) return [];
@@ -77,7 +93,10 @@ const ShowBrowser = ({ sketches, specials }: TShowBrowserProps) => {
               type="button"
               role="tab"
               aria-selected={tab === value}
-              onClick={() => setTab(value)}
+              onClick={() => {
+                setTab(value);
+                track('show-tab', { show, tab: value });
+              }}
               className={`eyebrow -mb-3.5 border-b-2 pb-3 ${
                 tab === value
                   ? 'border-primary text-foreground'
@@ -116,7 +135,10 @@ const ShowBrowser = ({ sketches, specials }: TShowBrowserProps) => {
 
           <select
             value={sort}
-            onChange={(event) => setSort(event.target.value as TSort)}
+            onChange={(event) => {
+              setSort(event.target.value as TSort);
+              track('show-sort', { show, sort: event.target.value });
+            }}
             aria-label="Ordenar sketches"
             className="hairline bg-content1 text-default-500 hover:text-foreground h-9 shrink-0 rounded-full px-3 text-sm outline-none"
           >

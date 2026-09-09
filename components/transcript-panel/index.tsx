@@ -1,3 +1,6 @@
+'use client';
+
+import { track } from '@/helpers/track';
 import { ChevronDown, Github } from 'lucide-react';
 import Link from 'next/link';
 
@@ -5,14 +8,23 @@ type TTranscriptPanelProps = {
   transcript: string;
   fileUrl: string;
   isRevised: boolean;
+  videoId: string;
 };
 
 const TranscriptPanel = ({
   transcript,
   fileUrl,
-  isRevised
+  isRevised,
+  videoId
 }: TTranscriptPanelProps) => (
-  <details className="hairline bg-content1 group rounded-lg open:pb-1">
+  <details
+    className="hairline bg-content1 group rounded-lg open:pb-1"
+    // `toggle` fires on close too; only the open is interesting.
+    onToggle={(event) =>
+      event.currentTarget.open &&
+      track('transcript-open', { videoId, revised: isRevised })
+    }
+  >
     <summary className="flex cursor-pointer list-none items-center gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
       <span className="eyebrow text-default-500 group-open:text-foreground">
         Transcrição
@@ -45,6 +57,9 @@ const TranscriptPanel = ({
         target="_blank"
         rel="noreferrer"
         className="text-default-500 hover:text-primary inline-flex items-center gap-2 self-start text-xs"
+        onClick={() =>
+          track('transcript-edit', { videoId, revised: isRevised })
+        }
       >
         <Github size="0.9rem" />
         Corrigir esta transcrição no GitHub

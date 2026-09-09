@@ -174,6 +174,7 @@ export default async function Page({ params }: TPageProps) {
 
             {transcript.text ? (
               <TranscriptPanel
+                videoId={video.id}
                 transcript={transcript.text}
                 isRevised={transcript.field === 'transcriptFinal'}
                 fileUrl={`https://github.com/diogomartino/osgatos/blob/development/scripts/transcripts/${video.id}.txt`}

@@ -1,6 +1,7 @@
 import { BreadcrumbsJsonLd } from '@/components/json-ld/breadcrumbs';
 import { ShowJsonLd } from '@/components/json-ld/show';
 import { ShowBrowser } from '@/components/show-browser';
+import { TrackedLink } from '@/components/tracked-link';
 import { getSiteUrl } from '@/config/site';
 import { formatMinutes } from '@/helpers/format-duration';
 import { getFileUrl } from '@/helpers/get-file-url';
@@ -12,7 +13,6 @@ import { getVideosByShow } from '@/queries/videos';
 import { Play, Shuffle } from 'lucide-react';
 import { Metadata } from 'next';
 import Image from 'next/image';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 export const revalidate = 604800; // 1 week
@@ -112,26 +112,34 @@ export default async function Page({ params }: TPageProps) {
 
             {first ? (
               <div className="mt-1 flex flex-wrap items-center gap-2">
-                <Link
+                <TrackedLink
                   href={`/watch/${first.id}`}
+                  event="show-play"
+                  payload={{ show: show.title, videoId: first.id }}
                   className="bg-foreground text-background inline-flex h-11 items-center gap-2 rounded-full px-6 text-sm font-semibold hover:opacity-90"
                 >
                   <Play size="1rem" fill="currentColor" />
                   Reproduzir
-                </Link>
-                <Link
+                </TrackedLink>
+                <TrackedLink
                   href={`/watch/${randomId}`}
+                  event="show-shuffle"
+                  payload={{ show: show.title, videoId: randomId }}
                   className="hairline bg-content1 text-foreground hover:border-primary/50 hover:text-primary inline-flex h-11 items-center gap-2 rounded-full px-6 text-sm font-semibold"
                 >
                   <Shuffle size="1rem" />
                   Ao calhas
-                </Link>
+                </TrackedLink>
               </div>
             ) : null}
           </div>
         </header>
 
-        <ShowBrowser sketches={sketches} specials={specials} />
+        <ShowBrowser
+          show={show.title}
+          sketches={sketches}
+          specials={specials}
+        />
       </div>
 
       <BreadcrumbsJsonLd

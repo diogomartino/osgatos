@@ -13,9 +13,6 @@ const nextConfig = {
     ],
     qualities: [40, 50, 60, 100]
   },
-  experimental: {
-    viewTransition: true
-  },
   headers: async () => [
     {
       source: '/:path*',

@@ -81,12 +81,14 @@ export default async function Home() {
 
       <VideoRail title="Ao calhas" videos={toCards(1)} />
 
-      {showsWithVideos.map(({ show, videos }) => (
+      {showsWithVideos.map(({ show, videos }, index) => (
         <VideoRail
           key={show.id}
           title={show.title}
           href={`/show/${show.slug}`}
-          videos={videos.slice(0, RAIL_SIZE).map((video) => toVideoCard(video))}
+          videos={sample(videos, RAIL_SIZE, index + 3).map((video) =>
+            toVideoCard(video)
+          )}
         />
       ))}
 

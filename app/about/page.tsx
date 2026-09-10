@@ -1,46 +1,13 @@
-import { getSiteUrl, siteConfig } from '@/config/site';
+import { buildMetadata } from '@/helpers/metadata';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
-const title = 'Sobre';
-const description =
-  'Conhece o objetivo do OsGatos.net: preservar a obra de Gato Fedorento sem fins comerciais.';
-
-export const metadata: Metadata = {
-  title,
-  description,
-  metadataBase: new URL(getSiteUrl()),
-  alternates: {
-    canonical: '/about'
-  },
-  openGraph: {
-    type: 'website',
-    title: `${title} | ${siteConfig.name}`,
-    description,
-    url: '/about',
-    siteName: siteConfig.name,
-    locale: siteConfig.locale,
-    images: [
-      {
-        url: siteConfig.defaultOgImage,
-        width: 1200,
-        height: 630,
-        alt: 'Os Gatos'
-      }
-    ]
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title,
-    description,
-    images: [
-      {
-        url: siteConfig.defaultOgImage,
-        alt: 'Os Gatos'
-      }
-    ]
-  }
-};
+export const metadata: Metadata = buildMetadata({
+  title: 'Sobre',
+  description:
+    'Conhece o objetivo do OsGatos.net: preservar a obra de Gato Fedorento sem fins comerciais.',
+  path: '/about'
+});
 
 const officialLinks = [
   {
@@ -59,12 +26,12 @@ const officialLinks = [
 
 export default function AboutPage() {
   return (
-    <article className="mx-auto flex w-full max-w-3xl flex-col gap-8">
+    <article className="shell flex max-w-3xl flex-col gap-8">
       <header className="flex flex-col gap-3">
         <h1 className="text-4xl leading-[0.95] md:text-5xl">Sobre o Projeto</h1>
       </header>
 
-      <section className="bg-content1 shadow-frame flex flex-col gap-5 rounded-lg border border-white/8 p-5 md:p-7">
+      <section className="bg-content1 shadow-frame hairline flex flex-col gap-5 rounded-lg p-5 md:p-7">
         <h2 className="text-2xl">Porquê?</h2>
 
         <p>
@@ -90,7 +57,7 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <section className="bg-content1 shadow-frame flex flex-col gap-5 rounded-lg border border-white/8 p-5 md:p-7">
+      <section className="bg-content1 shadow-frame hairline flex flex-col gap-5 rounded-lg p-5 md:p-7">
         <h2 className="text-2xl">Apenas Preservação</h2>
 
         <p>
@@ -115,7 +82,7 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <section className="bg-content1 shadow-frame flex flex-col gap-5 rounded-lg border border-white/8 p-5 md:p-7">
+      <section className="bg-content1 shadow-frame hairline flex flex-col gap-5 rounded-lg p-5 md:p-7">
         <h2 className="text-2xl">Links Oficiais</h2>
 
         <p>Sigam as páginas oficiais dos Gato Fedorento.</p>
@@ -127,8 +94,7 @@ export default function AboutPage() {
                 href={link.url}
                 target="_blank"
                 rel="noreferrer"
-                className="bg-content2 hover:border-primary/50 hover:text-primary flex flex-col gap-1 rounded-lg border border-white/8 px-4 py-3"
-                data-interactive="true"
+                className="bg-content2 hover:border-primary/50 hover:text-primary hairline flex flex-col gap-1 rounded-lg px-4 py-3"
               >
                 <span className="text-foreground text-sm font-semibold">
                   {link.label}

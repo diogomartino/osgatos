@@ -1,76 +1,66 @@
+import { formatDuration } from '@/helpers/format-duration';
+import { getFileUrl } from '@/helpers/get-file-url';
+import { TVideoCard } from '@/types/db';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { memo } from 'react';
 
 type TVideoCardProps = {
-  title: string;
-  duration: number; // in seconds
-  thumbnailUrl: string;
-  href?: string;
-  episodeNumber?: number;
+  video: TVideoCard;
+  showTitle?: string | null;
   priority?: boolean;
-  hasFinalTranscript?: boolean;
 };
 
-const VideoCard = memo(
-  ({
-    title,
-    duration,
-    thumbnailUrl,
-    href,
-    priority,
-    hasFinalTranscript
-  }: TVideoCardProps) => {
-    const minutes = Math.floor(duration / 60);
-    const seconds = duration % 60;
-    const formattedDuration = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-    const cardContent = (
-      <article className="group ease-editorial flex h-full flex-col gap-2.5 transition-transform duration-200 hover:scale-[1.02]">
-        <div className="bg-content2 shadow-soft relative aspect-[16/9] w-full overflow-hidden rounded-md">
-          <div className="pointer-events-none absolute inset-0 z-10 border border-white/8 opacity-70" />
-          <NextImage
-            src={thumbnailUrl}
-            alt={`Miniatura do sketch ${title}`}
-            fill
-            sizes="(max-width: 767px) calc((100vw - 2.75rem) / 2), (max-width: 1023px) calc((100vw - 4.5rem) / 3), (max-width: 1599px) calc((100vw - 26.75rem) / 4), 307px"
-            className="object-cover object-center"
-            quality={50}
-            priority={priority}
-            fetchPriority={priority ? 'high' : undefined}
+const VideoCard = memo(({ video, showTitle, priority }: TVideoCardProps) => (
+  <Link
+    href={`/watch/${video.id}`}
+    aria-label={`Ver o sketch ${video.title}`}
+    className="group block h-full"
+  >
+    <article className="flex h-full flex-col gap-2.5">
+      <div className="bg-content2 shadow-soft ease-editorial relative aspect-video w-full overflow-hidden rounded-md transition-transform duration-200 group-hover:scale-[1.02]">
+        <div className="hairline pointer-events-none absolute inset-0 z-10 rounded-md opacity-70" />
+        <NextImage
+          src={getFileUrl(video, video.thumbnail)}
+          alt={`Miniatura do sketch ${video.title}`}
+          fill
+          sizes="(max-width: 767px) 60vw, 300px"
+          className="object-cover object-center"
+          quality={50}
+          priority={priority}
+        />
+        {(video.hasFinalTranscript ??
+        Boolean(video.transcriptFinal?.trim())) ? (
+          <span
+            aria-hidden="true"
+            title="Transcrição revista"
+            className="absolute top-0 right-0 z-20 h-4 w-4 bg-green-400 opacity-45 transition-opacity duration-200 [clip-path:polygon(100%_0,0_0,100%_100%)] group-hover:opacity-100"
           />
-          {hasFinalTranscript ? (
-            <span
-              aria-hidden="true"
-              className="absolute top-0 right-0 z-20 h-4 w-4 bg-green-400 opacity-45 transition-opacity duration-200 [clip-path:polygon(100%_0,0_0,100%_100%)] group-hover:opacity-100"
-            />
-          ) : null}
-          <div className="absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t from-black/75 to-transparent" />
-          <div className="absolute right-2 bottom-2 z-20">
-            <span className="rounded-full bg-black/75 px-2.5 py-1 text-[0.62rem] font-semibold tracking-[0.14em] text-white uppercase">
-              {formattedDuration}
-            </span>
-          </div>
-        </div>
-        <div className="flex flex-1 flex-col gap-1">
-          <h3 className="text-foreground ease-editorial group-hover:text-primary line-clamp-2 text-[0.82rem] transition-colors duration-200 md:text-[0.92rem] md:leading-[1.25]">
-            {title}
-          </h3>
-        </div>
-      </article>
-    );
+        ) : null}
+        <div className="absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t from-black/75 to-transparent" />
+        <span className="absolute right-2 bottom-2 z-20 rounded-full bg-black/75 px-2.5 py-1 text-[0.62rem] font-semibold tracking-[0.14em] text-white uppercase">
+          {formatDuration(video.duration)}
+        </span>
+      </div>
 
-    if (href) {
-      return (
-        <Link href={href} className="block h-full" data-interactive="true">
-          {cardContent}
-        </Link>
-      );
-    }
-
-    return cardContent;
-  }
-);
+      <div className="flex flex-1 flex-col gap-0.5">
+        <h3 className="text-foreground ease-editorial group-hover:text-primary line-clamp-2 text-[0.82rem] transition-colors duration-200 md:text-[0.92rem] md:leading-[1.25]">
+          {video.title}
+        </h3>
+        {(showTitle ?? video.showTitle) ? (
+          <span className="text-default-500 truncate text-xs">
+            {showTitle ?? video.showTitle}
+          </span>
+        ) : null}
+        {video.snippet ? (
+          <p className="text-default-500 mt-1 line-clamp-2 text-xs italic">
+            “{video.snippet}”
+          </p>
+        ) : null}
+      </div>
+    </article>
+  </Link>
+));
 VideoCard.displayName = 'VideoCard';
 
 export { VideoCard };

@@ -1,20 +1,25 @@
-import { Poster } from '@/components/poster';
-import { getSiteUrl, siteConfig } from '@/config/site';
-import { getFileUrl } from '@/helpers/get-file-url';
-import { getShows } from '@/queries/shows';
+import { Hero } from '@/components/hero';
+import { SiteJsonLd } from '@/components/json-ld/site';
+import { ShowRail } from '@/components/rail/show-rail';
+import { VideoRail } from '@/components/rail/video-rail';
+import { buildMetadata } from '@/helpers/metadata';
+import { dailySeed, shuffle } from '@/helpers/shuffle';
+import { toVideoCard } from '@/helpers/to-video-card';
+import { getShowsWithVideos } from '@/queries/shows';
+import { TVideoListItem } from '@/types/db';
 import { Metadata } from 'next';
 
-export const revalidate = 604800; // 1 week
+export const revalidate = 3600; // 1 hour
 
 export async function generateMetadata(): Promise<Metadata> {
-  const title = siteConfig.title;
-  const description =
-    'Biblioteca editorial com séries e sketches completos de Gato Fedorento, organizada para descoberta rápida.';
-  const url = getSiteUrl();
-
   return {
-    title,
-    description,
+    ...buildMetadata({
+      title: 'Os Gatos',
+      description:
+        'Biblioteca completa de Gato Fedorento: séries, sketches e especiais, com pesquisa por transcrição.',
+      path: '/',
+      imageAlt: 'Biblioteca Os Gatos'
+    }),
     keywords: [
       'Gato Fedorento',
       'comédia portuguesa',
@@ -23,80 +28,72 @@ export async function generateMetadata(): Promise<Metadata> {
       'humor português',
       'os gatos net',
       'osgatos.net'
-    ],
-    metadataBase: new URL(url),
-    alternates: {
-      canonical: '/'
-    },
-    openGraph: {
-      type: 'website',
-      title,
-      description,
-      url: '/',
-      siteName: siteConfig.name,
-      images: [
-        {
-          url: siteConfig.defaultOgImage,
-          width: 1200,
-          height: 630,
-          alt: 'Cartaz editorial da biblioteca Os Gatos'
-        }
-      ],
-      locale: siteConfig.locale
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: [
-        {
-          url: siteConfig.defaultOgImage,
-          alt: 'Cartaz editorial da biblioteca Os Gatos'
-        }
-      ]
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true
-      }
-    }
+    ]
   };
 }
 
-export default async function Home() {
-  const shows = await getShows();
+const RAIL_SIZE = 16;
 
-  if (shows.length === 0) {
+const sample = <T,>(items: T[], count: number, offset: number) =>
+  shuffle(items, dailySeed() + offset).slice(0, count);
+
+export default async function Home() {
+  // Specials are long-form and belong on their series page, not the home rails.
+  const showsWithVideos = (await getShowsWithVideos()).map(
+    ({ show, videos }) => ({
+      show,
+      videos: videos.filter((video) => !video.isSpecial)
+    })
+  );
+  const shows = showsWithVideos.map(({ show }) => show);
+
+  const allVideos = showsWithVideos.flatMap(({ show, videos }) =>
+    videos.map((video) => ({ video, show }))
+  );
+
+  if (allVideos.length === 0) {
     return (
-      <section
-        aria-labelledby="empty-shows-heading"
-        className="bg-content1/72 shadow-frame mx-auto flex min-h-72 w-full max-w-3xl flex-col justify-center rounded-[1.5rem] border border-white/8 px-6 py-10 text-center"
-        data-shell-frame="true"
-      >
-        <h1 id="empty-shows-heading" className="text-2xl">
-          Ainda não há séries disponíveis.
-        </h1>
+      <section className="shell hairline bg-content1/70 mx-auto flex min-h-72 max-w-3xl flex-col justify-center rounded-2xl py-10 text-center">
+        <h1 className="text-2xl">Ainda não há séries disponíveis.</h1>
       </section>
     );
   }
 
+  const toCards = (
+    offset: number,
+    filter?: (video: TVideoListItem) => boolean
+  ) =>
+    sample(
+      filter ? allVideos.filter(({ video }) => filter(video)) : allVideos,
+      RAIL_SIZE,
+      offset
+    ).map(({ video, show }) => toVideoCard(video, show));
+
+  const featured = sample(allVideos, 1, 0)[0];
+
   return (
-    <section aria-label="Séries disponíveis" className="w-full">
-      <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-4 xl:grid-cols-5">
-        {shows.map((show, index) => (
-          <li key={show.id}>
-            <Poster
-              href={`/show/${show.slug}`}
-              imageUrl={getFileUrl(show, show.cover)}
-              title={show.title}
-              priority={index === 0}
-            />
-          </li>
-        ))}
-      </ul>
-    </section>
+    <div className="flex w-full flex-col gap-8 lg:gap-10">
+      <SiteJsonLd />
+
+      <Hero video={featured.video} show={featured.show} />
+
+      <ShowRail title="Séries" shows={shows} />
+
+      <VideoRail title="Ao calhas" videos={toCards(1)} />
+
+      {showsWithVideos.map(({ show, videos }) => (
+        <VideoRail
+          key={show.id}
+          title={show.title}
+          href={`/show/${show.slug}`}
+          videos={videos.slice(0, RAIL_SIZE).map((video) => toVideoCard(video))}
+        />
+      ))}
+
+      <VideoRail
+        title="Com transcrição revista"
+        videos={toCards(2, (video) => Boolean(video.transcriptFinal?.trim()))}
+      />
+    </div>
   );
 }

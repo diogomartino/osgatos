@@ -56,22 +56,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getShowsMapping()
   ]);
 
+  const latestChange = [...videos, ...shows].reduce<Date>(
+    (newest, entry) =>
+      entry.lastModified && new Date(entry.lastModified) > newest
+        ? new Date(entry.lastModified)
+        : newest,
+    new Date(0)
+  );
+
   return [
     {
       url: siteUrl,
-      lastModified: new Date(),
+      lastModified: latestChange,
       changeFrequency: 'weekly',
       priority: 1
     },
     {
       url: `${siteUrl}/about`,
-      lastModified: new Date(),
+      lastModified: latestChange,
       changeFrequency: 'monthly',
       priority: 0.4
     },
     {
       url: `${siteUrl}/help-transcriptions`,
-      lastModified: new Date(),
+      lastModified: latestChange,
       changeFrequency: 'monthly',
       priority: 0.4
     },

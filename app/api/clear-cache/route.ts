@@ -1,3 +1,4 @@
+import { clearSearchIndex } from '@/queries/search';
 import { CacheKey } from '@/statics';
 import { revalidatePath, revalidateTag } from 'next/cache';
 
@@ -9,9 +10,12 @@ export async function GET(request: Request) {
 
   if (key && serverKey && key === serverKey) {
     Object.values(CacheKey).forEach((tag) => {
-      revalidateTag(tag);
+      revalidateTag(tag, 'max');
     });
 
+    clearSearchIndex();
+
+    revalidatePath('/', 'page');
     revalidatePath('/watch/[id]', 'page');
     revalidatePath('/show/[slug]', 'page');
 

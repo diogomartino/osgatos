@@ -14,20 +14,18 @@ const Poster = memo(({ title, imageUrl, href, priority }: TPosterProps) => {
     <Link
       href={href}
       className="group block h-full"
-      data-interactive="true"
       aria-label={`Abrir a série ${title}`}
     >
       <article className="bg-content2 shadow-soft ease-editorial relative h-full overflow-hidden rounded-lg transition-transform duration-200 group-hover:scale-[1.02]">
-        <div className="absolute inset-0 z-10 border border-white/8 opacity-70" />
+        <div className="hairline pointer-events-none absolute inset-0 z-10 rounded-lg opacity-70" />
         <div className="relative aspect-[2/3] w-full overflow-hidden">
           <NextImage
             src={imageUrl}
             alt={`Capa da série ${title}`}
             fill
             className="object-cover object-center"
-            sizes="(max-width: 767px) calc((100vw - 2.75rem) / 2), (max-width: 1023px) calc((100vw - 4.5rem) / 3), (max-width: 1279px) calc((100vw - 7rem) / 4), (max-width: 1599px) calc((100vw - 8rem) / 5), 294px"
+            sizes="(max-width: 767px) 152px, 192px"
             priority={priority}
-            fetchPriority={priority ? 'high' : undefined}
             quality={50}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent opacity-90" />

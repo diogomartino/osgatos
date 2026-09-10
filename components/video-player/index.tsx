@@ -1,7 +1,7 @@
 'use client';
 
 import { getYoutubeId } from '@/helpers/get-youtube-id';
-import type { TUmamiWindow } from '@/types';
+import { track } from '@/helpers/track';
 import { YouTubeEmbed } from '@next/third-parties/google';
 import { memo, useCallback, useMemo, useRef } from 'react';
 
@@ -20,11 +20,7 @@ const VideoPlayer = memo(({ url, className, videoId }: TVideoPlayerProps) => {
 
     playedFirst.current = true;
 
-    const umami = (window as TUmamiWindow).umami;
-
-    umami?.track('play-video', {
-      videoId
-    });
+    track('play-video', { videoId });
   }, [videoId]);
 
   if (!youtubeId) {

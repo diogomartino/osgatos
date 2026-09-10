@@ -1,46 +1,13 @@
-import { getSiteUrl, siteConfig } from '@/config/site';
+import { buildMetadata } from '@/helpers/metadata';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
-const title = 'Ajudar com Transcrições';
-const description =
-  'Tutorial para corrigir transcrições dos sketches diretamente no GitHub.';
-
-export const metadata: Metadata = {
-  title,
-  description,
-  metadataBase: new URL(getSiteUrl()),
-  alternates: {
-    canonical: '/help-transcriptions'
-  },
-  openGraph: {
-    type: 'website',
-    title: `${title} | ${siteConfig.name}`,
-    description,
-    url: '/help-transcriptions',
-    siteName: siteConfig.name,
-    locale: siteConfig.locale,
-    images: [
-      {
-        url: siteConfig.defaultOgImage,
-        width: 1200,
-        height: 630,
-        alt: 'Os Gatos'
-      }
-    ]
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title,
-    description,
-    images: [
-      {
-        url: siteConfig.defaultOgImage,
-        alt: 'Os Gatos'
-      }
-    ]
-  }
-};
+export const metadata: Metadata = buildMetadata({
+  title: 'Ajudar com Transcrições',
+  description:
+    'Tutorial para corrigir transcrições dos sketches diretamente no GitHub.',
+  path: '/help-transcriptions'
+});
 
 const steps = [
   {
@@ -63,7 +30,7 @@ const steps = [
 
 export default function HelpTranscriptionsPage() {
   return (
-    <article className="mx-auto flex w-full max-w-4xl flex-col gap-8">
+    <article className="shell flex max-w-4xl flex-col gap-8">
       <header className="flex max-w-3xl flex-col gap-3">
         <h1 className="text-4xl leading-[0.95] md:text-5xl">
           Como corrigir transcrições.
@@ -78,18 +45,16 @@ export default function HelpTranscriptionsPage() {
         {steps.map((step, index) => (
           <div
             key={step.title}
-            className="bg-content1 shadow-frame rounded-lg border border-white/8 p-5"
+            className="bg-content1 shadow-frame hairline rounded-lg p-5"
           >
-            <span className="text-primary text-xs font-semibold tracking-[0.22em] uppercase">
-              Passo {index + 1}
-            </span>
+            <span className="text-primary eyebrow">Passo {index + 1}</span>
             <h2 className="mt-3 text-xl">{step.title}</h2>
             <p className="text-default-500 mt-2 text-sm">{step.text}</p>
           </div>
         ))}
       </section>
 
-      <section className="bg-content1 shadow-frame flex flex-col gap-4 rounded-lg border border-white/8 p-5 md:p-7">
+      <section className="bg-content1 shadow-frame hairline flex flex-col gap-4 rounded-lg p-5 md:p-7">
         <h2 className="text-2xl">O que deve ser corrigido?</h2>
         <ul className="text-default-500 flex list-disc flex-col gap-2 pl-5 text-sm">
           <li>Palavras mal reconhecidas.</li>
@@ -101,15 +66,14 @@ export default function HelpTranscriptionsPage() {
         </ul>
       </section>
 
-      <section className="bg-content1 shadow-frame flex flex-col gap-4 rounded-lg border border-white/8 p-5 md:p-7">
+      <section className="bg-content1 shadow-frame hairline flex flex-col gap-4 rounded-lg p-5 md:p-7">
         <h2 className="text-2xl">Links úteis</h2>
         <div className="flex flex-wrap gap-2 text-sm">
           <Link
             href="https://github.com/diogomartino/osgatos/tree/development/scripts/transcripts"
             target="_blank"
             rel="noreferrer"
-            className="bg-content2 hover:text-primary rounded-full border border-white/8 px-4 py-2"
-            data-interactive="true"
+            className="bg-content2 hover:text-primary hairline rounded-full px-4 py-2"
           >
             Pasta das transcrições
           </Link>
@@ -117,8 +81,7 @@ export default function HelpTranscriptionsPage() {
             href="https://github.com/diogomartino/osgatos/pulls"
             target="_blank"
             rel="noreferrer"
-            className="bg-content2 hover:text-primary rounded-full border border-white/8 px-4 py-2"
-            data-interactive="true"
+            className="bg-content2 hover:text-primary hairline rounded-full px-4 py-2"
           >
             Pull requests
           </Link>

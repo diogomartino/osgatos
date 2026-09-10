@@ -1,6 +1,6 @@
 import { getPb } from '@/helpers/pb';
 import { CacheKey, REVALIDATE_TIME } from '@/statics';
-import { TVideo } from '@/types/db';
+import { TVideo, TVideoListItem } from '@/types/db';
 import { unstable_cache } from 'next/cache';
 import 'server-only';
 
@@ -26,57 +26,35 @@ const getVideoById = async (id: string): Promise<TVideo | undefined> =>
     }
   )();
 
-const getPreviousAndNextVideoById = async (
-  videoId: string
-): Promise<{ previous: TVideo | undefined; next: TVideo | undefined }> =>
+const LIST_FIELDS = [
+  'id',
+  'collectionId',
+  'show',
+  'thumbnail',
+  'index',
+  'title',
+  'slug',
+  'videoUrl',
+  'duration',
+  'isSpecial',
+  'created',
+  'updated',
+  'transcriptFinal:excerpt(1)'
+].join(',');
+
+const getVideosByShow = (showId: string): Promise<TVideoListItem[]> =>
   unstable_cache(
     async () => {
       try {
         const pb = await getPb();
 
-        const currentVideo = await pb
+        const videos = await pb
           .collection('videos')
-          .getFirstListItem<TVideo>(`id="${videoId}" && show.public=true`);
-
-        const [previous, next] = await Promise.all([
-          pb
-            .collection('videos')
-            .getFirstListItem<TVideo>(
-              `show="${currentVideo.show}" && show.public=true && created < "${currentVideo.created}"`,
-              { sort: '-created' }
-            )
-            .catch(() => null),
-          pb
-            .collection('videos')
-            .getFirstListItem<TVideo>(
-              `show="${currentVideo.show}" && show.public=true && created > "${currentVideo.created}"`,
-              { sort: 'created' }
-            )
-            .catch(() => null)
-        ]);
-
-        return { previous: previous ?? undefined, next: next ?? undefined };
-      } catch {
-        return { previous: undefined, next: undefined };
-      }
-    },
-    [CacheKey.PREV_NEXT_VIDEO_BY_ID, videoId],
-    {
-      revalidate: REVALIDATE_TIME,
-      tags: [CacheKey.PREV_NEXT_VIDEO_BY_ID]
-    }
-  )();
-
-const getVideosByShow = (showId: string): Promise<TVideo[]> =>
-  unstable_cache(
-    async () => {
-      try {
-        const pb = await getPb();
-
-        const videos = await pb.collection('videos').getFullList<TVideo>({
-          filter: `show="${showId}" && show.public=true`,
-          sort: 'created'
-        });
+          .getFullList<TVideoListItem>({
+            filter: `show="${showId}" && show.public=true`,
+            sort: 'created',
+            fields: LIST_FIELDS
+          });
 
         return videos;
       } catch {
@@ -104,9 +82,4 @@ const getAllVideos = async (): Promise<TVideo[]> => {
   }
 };
 
-export {
-  getAllVideos,
-  getPreviousAndNextVideoById,
-  getVideoById,
-  getVideosByShow
-};
+export { getAllVideos, getVideoById, getVideosByShow };

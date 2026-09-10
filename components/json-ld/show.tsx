@@ -1,3 +1,5 @@
+import { JsonLd } from './index';
+
 type ShowJsonLdProps = {
   title: string;
   description: string;
@@ -6,7 +8,6 @@ type ShowJsonLdProps = {
   datePublished: string; // ISO 8601
   dateModified?: string; // ISO 8601
   episodes?: {
-    // optional list of episodes
     name: string;
     url: string;
     episodeNumber?: number;
@@ -29,6 +30,7 @@ const ShowJsonLd = ({
     name: title,
     description,
     url,
+    inLanguage: 'pt-PT',
     ...(image && { image }),
     datePublished,
     ...(dateModified && { dateModified }),
@@ -44,12 +46,7 @@ const ShowJsonLd = ({
       })
   };
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-    />
-  );
+  return <JsonLd data={jsonLd} />;
 };
 
 export { ShowJsonLd };

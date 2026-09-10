@@ -108,18 +108,20 @@ const config = {
               DEFAULT: '#181818',
               foreground: '#f5f5f1'
             },
+            // Vermilion, not Netflix red: hue shifted 357deg -> 12deg so the
+            // accent reads warm/comedic instead of borrowed.
             primary: {
-              50: '#ffe6e8',
-              100: '#ffbec4',
-              200: '#ff919c',
-              300: '#ff5f70',
-              400: '#f93246',
-              500: '#e50914',
-              600: '#bd0811',
-              700: '#95060d',
-              800: '#690409',
-              900: '#420205',
-              DEFAULT: '#e50914',
+              50: '#fdece8',
+              100: '#fbcdc2',
+              200: '#f8a894',
+              300: '#f37e63',
+              400: '#ee5f3f',
+              500: '#e8482a',
+              600: '#c73a1f',
+              700: '#9e2d18',
+              800: '#732011',
+              900: '#48140a',
+              DEFAULT: '#e8482a',
               foreground: '#ffffff'
             },
             secondary: {

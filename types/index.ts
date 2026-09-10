@@ -1,9 +1,3 @@
-import { SVGProps } from 'react';
-
-export type IconSvgProps = SVGProps<SVGSVGElement> & {
-  size?: number;
-};
-
 export type TUmamiTrackPayload = Record<
   string,
   string | number | boolean | null | undefined

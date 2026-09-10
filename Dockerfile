@@ -43,7 +43,12 @@ ENV NODE_ENV=production \
     PORT=3000 \
     HOSTNAME=0.0.0.0
 
-RUN addgroup -g 1001 -S nodejs \
+# curl is required by Coolify's healthcheck, which overrides any HEALTHCHECK
+# declared here. It matters that it is curl and not busybox wget: the server
+# binds IPv4 only, `localhost` resolves to ::1 first, and only curl retries the
+# other address family.
+RUN apk add --no-cache curl \
+    && addgroup -g 1001 -S nodejs \
     && adduser -u 1001 -S nextjs -G nodejs \
     && mkdir -p .next \
     && chown nextjs:nodejs .next
@@ -54,8 +59,5 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 EXPOSE 3000
-
-HEALTHCHECK --interval=30s --timeout=3s --start-period=15s --retries=3 \
-  CMD node -e "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
 CMD ["node", "server.js"]

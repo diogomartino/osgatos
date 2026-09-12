@@ -3,7 +3,7 @@ import { SiteJsonLd } from '@/components/json-ld/site';
 import { ShowRail } from '@/components/rail/show-rail';
 import { VideoRail } from '@/components/rail/video-rail';
 import { buildMetadata } from '@/helpers/metadata';
-import { dailySeed, shuffle } from '@/helpers/shuffle';
+import { sample } from '@/helpers/shuffle';
 import { toVideoCard } from '@/helpers/to-video-card';
 import { getShowsWithVideos } from '@/queries/shows';
 import { TVideoListItem } from '@/types/db';
@@ -33,9 +33,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const RAIL_SIZE = 16;
-
-const sample = <T,>(items: T[], count: number, offset: number) =>
-  shuffle(items, dailySeed() + offset).slice(0, count);
 
 export default async function Home() {
   // Specials are long-form and belong on their series page, not the home rails.

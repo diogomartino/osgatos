@@ -9,6 +9,7 @@ import { getFileUrl } from '@/helpers/get-file-url';
 import { getVideoMetadataDescription } from '@/helpers/get-video-metadata-description';
 import { getYoutubeId } from '@/helpers/get-youtube-id';
 import { buildMetadata } from '@/helpers/metadata';
+import { sample } from '@/helpers/shuffle';
 import { toVideoCard } from '@/helpers/to-video-card';
 import { getShowByVideoId } from '@/queries/shows';
 import { getVideoById, getVideosByShow } from '@/queries/videos';
@@ -94,12 +95,11 @@ export default async function Page({ params }: TPageProps) {
   const previous = position > 0 ? siblings[position - 1] : undefined;
   const next = position >= 0 ? siblings[position + 1] : undefined;
 
-  const upNext = [
-    ...siblings.slice(position + 1),
-    ...siblings.slice(0, Math.max(position, 0))
-  ]
-    .slice(0, UP_NEXT_SIZE)
-    .map((sibling) => toVideoCard(sibling));
+  const upNext = sample(
+    siblings.filter((sibling) => sibling.id !== video.id),
+    UP_NEXT_SIZE,
+    Math.max(position, 0)
+  ).map((sibling) => toVideoCard(sibling));
 
   const navLink =
     'hairline bg-content1 hover:border-primary/50 hover:text-primary text-default-500 flex h-10 w-10 items-center justify-center rounded-full';

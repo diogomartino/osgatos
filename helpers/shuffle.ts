@@ -23,4 +23,7 @@ const shuffle = <T>(items: T[], seed?: number): T[] => {
 
 const dailySeed = () => Math.floor(Date.now() / 86_400_000);
 
-export { dailySeed, shuffle };
+const sample = <T>(items: T[], count: number, offset: number): T[] =>
+  shuffle(items, dailySeed() + offset).slice(0, count);
+
+export { dailySeed, sample, shuffle };

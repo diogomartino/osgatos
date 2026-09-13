@@ -57,7 +57,7 @@ export default async function Page({ params }: TPageProps) {
 
   const totalDuration = videos.reduce((acc, v) => acc + (v.duration ?? 0), 0);
   const coverUrl = getFileUrl(show, show.cover);
-  const randomId = shuffle([...sketches, ...specials], dailySeed())[0]?.id;
+  const randomId = shuffle(sketches, dailySeed())[0]?.id;
   const description = `Arquivo completo da série ${show.title}, com ${videos.length} sketches${specials.length > 0 ? ` e ${specials.length} especiais` : ''}.`;
 
   return (

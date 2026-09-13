@@ -10,6 +10,7 @@ import { getVideoMetadataDescription } from '@/helpers/get-video-metadata-descri
 import { getYoutubeId } from '@/helpers/get-youtube-id';
 import { buildMetadata } from '@/helpers/metadata';
 import { sample } from '@/helpers/shuffle';
+import { sketchesOnly } from '@/helpers/sketches-only';
 import { toVideoCard } from '@/helpers/to-video-card';
 import { getShowByVideoId } from '@/queries/shows';
 import { getVideoById, getVideosByShow } from '@/queries/videos';
@@ -91,12 +92,17 @@ export default async function Page({ params }: TPageProps) {
   const transcript = pickTranscript(video);
 
   const siblings = show ? await getVideosByShow(show.id) : [];
-  const position = siblings.findIndex((sibling) => sibling.id === video.id);
-  const previous = position > 0 ? siblings[position - 1] : undefined;
-  const next = position >= 0 ? siblings[position + 1] : undefined;
+  const sketches = sketchesOnly(siblings);
+
+  const sequence = video.isSpecial
+    ? siblings.filter((sibling) => sibling.isSpecial)
+    : sketches;
+  const position = sequence.findIndex((sibling) => sibling.id === video.id);
+  const previous = position > 0 ? sequence[position - 1] : undefined;
+  const next = position >= 0 ? sequence[position + 1] : undefined;
 
   const upNext = sample(
-    siblings.filter((sibling) => sibling.id !== video.id),
+    sketches.filter((sibling) => sibling.id !== video.id),
     UP_NEXT_SIZE,
     Math.max(position, 0)
   ).map((sibling) => toVideoCard(sibling));

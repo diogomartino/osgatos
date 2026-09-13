@@ -4,6 +4,7 @@ import { ShowRail } from '@/components/rail/show-rail';
 import { VideoRail } from '@/components/rail/video-rail';
 import { buildMetadata } from '@/helpers/metadata';
 import { sample } from '@/helpers/shuffle';
+import { sketchesOnly } from '@/helpers/sketches-only';
 import { toVideoCard } from '@/helpers/to-video-card';
 import { getShowsWithVideos } from '@/queries/shows';
 import { TVideoListItem } from '@/types/db';
@@ -39,7 +40,7 @@ export default async function Home() {
   const showsWithVideos = (await getShowsWithVideos()).map(
     ({ show, videos }) => ({
       show,
-      videos: videos.filter((video) => !video.isSpecial)
+      videos: sketchesOnly(videos)
     })
   );
   const shows = showsWithVideos.map(({ show }) => show);
